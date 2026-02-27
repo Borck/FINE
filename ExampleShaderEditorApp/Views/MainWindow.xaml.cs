@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -47,7 +48,10 @@ namespace ExampleShaderEditorApp.Views
                 this.Bind(ViewModel, vm => vm.NetworkViewModel.ZoomFactor, v => v.zoomFactorSlider.Value).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.NetworkViewModel.MaxZoomLevel, v => v.zoomFactorSlider.Maximum).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.NetworkViewModel.MinZoomLevel, v => v.zoomFactorSlider.Minimum).DisposeWith(d);
-                this.viewAllButton.Events().Click.Subscribe(x => networkView.CenterAndZoomView()).DisposeWith(d);
+                Observable.FromEventPattern<RoutedEventHandler, RoutedEventArgs>(
+                    h => this.viewAllButton.Click += h,
+                    h => this.viewAllButton.Click -= h)
+                    .Subscribe(x => networkView.CenterAndZoomView()).DisposeWith(d);
 
                 this.WhenAnyValue(v => v.shaderPreviewView.ActualWidth).BindTo(this, v => v.shaderPreviewView.Height).DisposeWith(d);
 

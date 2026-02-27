@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFrameworks>net6.0-windows;net8.0-windows;net10.0-windows</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
@@ -11,8 +11,8 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.2" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.9.3" />
     <PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
-    <PackageReference Include="ReactiveUI" Version="20.4.1" />
-    <PackageReference Include="ReactiveUI.Testing" Version="20.4.1" />
+    <PackageReference Include="ReactiveUI" Version="16.4.15" />
+    <PackageReference Include="ReactiveUI.Testing" Version="16.4.15" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,9 @@
-﻿using System.Reactive;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ReactiveUI;
 
 namespace NodeNetwork.Toolkit.Group.AddEndpointDropPanel
@@ -44,7 +45,9 @@ namespace NodeNetwork.Toolkit.Group.AddEndpointDropPanel
 
             this.WhenActivated(d =>
             {
-                this.Events().MouseLeftButtonUp
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => this.MouseLeftButtonUp += h,
+                    h => this.MouseLeftButtonUp -= h)
                     .Select(_ => Unit.Default)
                     .InvokeCommand(this, v => v.ViewModel.AddEndpointFromPendingConnection)
                     .DisposeWith(d);

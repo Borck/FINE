@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -199,12 +199,17 @@ namespace NodeNetwork.Views
 	            this.BindList(ViewModel, vm => vm.Connections, v => v.connectionsControl.ItemsSource).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.PendingConnection, v => v.pendingConnectionView.ViewModel).DisposeWith(d);
 
-                this.Events().MouseMove
+                Observable.FromEventPattern<MouseEventHandler, MouseEventArgs>(
+                    h => this.MouseMove += h,
+                    h => this.MouseMove -= h)
+                    .Select(pattern => pattern.EventArgs)
                     .Select(e => e.GetPosition(contentContainer))
                     .BindTo(this, v => v.ViewModel.PendingConnection.LooseEndPoint)
                     .DisposeWith(d);
 
-                this.Events().MouseLeftButtonUp
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => this.MouseLeftButtonUp += h,
+                    h => this.MouseLeftButtonUp -= h)
                     .Where(_ => ViewModel?.PendingConnection != null)
                     .Subscribe(_ => ViewModel?.OnPendingConnectionDropped())
                     .DisposeWith(d);
@@ -215,8 +220,15 @@ namespace NodeNetwork.Views
         {
             this.WhenActivated((CompositeDisposable d) =>
             {
-                this.Events().MouseLeftButtonDown.Subscribe(_ => Focus()).DisposeWith(d);
-                this.Events().KeyDown.Where(k => k.Key == Key.Delete).InvokeCommand(this, v=> v.ViewModel.DeleteSelectedNodes).DisposeWith(d);
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => this.MouseLeftButtonDown += h,
+                    h => this.MouseLeftButtonDown -= h)
+                    .Subscribe(_ => Focus()).DisposeWith(d);
+                Observable.FromEventPattern<KeyEventHandler, KeyEventArgs>(
+                    h => this.KeyDown += h,
+                    h => this.KeyDown -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Where(k => k.Key == Key.Delete).InvokeCommand(this, v=> v.ViewModel.DeleteSelectedNodes).DisposeWith(d);
             });
         }
 
@@ -233,7 +245,11 @@ namespace NodeNetwork.Views
                     .DisposeWith(d);
 
                 bool cutGestured = false;
-                dragCanvas.Events().MouseDown.Subscribe(e =>
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => dragCanvas.MouseDown += h,
+                    h => dragCanvas.MouseDown -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     if (StartCutGesture.Matches(this, e))
                     {
@@ -246,7 +262,11 @@ namespace NodeNetwork.Views
                     }
                 }).DisposeWith(d);
 
-                dragCanvas.Events().MouseMove.Subscribe(e =>
+                Observable.FromEventPattern<MouseEventHandler, MouseEventArgs>(
+                    h => dragCanvas.MouseMove += h,
+                    h => dragCanvas.MouseMove -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     if (!ViewModel.CutLine.IsVisible && cutGestured)
                     {
@@ -268,7 +288,11 @@ namespace NodeNetwork.Views
                     
                 }).DisposeWith(d);
 
-                dragCanvas.Events().MouseUp.Subscribe(e =>
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => dragCanvas.MouseUp += h,
+                    h => dragCanvas.MouseUp -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     cutGestured = false;
                     if (ViewModel.CutLine.IsVisible)
@@ -350,7 +374,11 @@ namespace NodeNetwork.Views
                     Canvas.SetTop(pendingNodeView, pos.Y);
                 }).DisposeWith(d);
 
-                this.Events().DragOver.Subscribe(e =>
+                Observable.FromEventPattern<DragEventHandler, DragEventArgs>(
+                    h => this.DragOver += h,
+                    h => this.DragOver -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     object data = e.Data.GetData("nodeVM");
                     NodeViewModel newNodeVm = data as NodeViewModel;
@@ -364,7 +392,11 @@ namespace NodeNetwork.Views
                     e.Effects = newNodeVm != null ? DragDropEffects.Copy : DragDropEffects.None;
                 }).DisposeWith(d);
 
-                this.Events().Drop.Subscribe(e =>
+                Observable.FromEventPattern<DragEventHandler, DragEventArgs>(
+                    h => this.Drop += h,
+                    h => this.Drop -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     object data = e.Data.GetData("nodeVM");
                     NodeViewModel newNodeVm = data as NodeViewModel;
@@ -378,7 +410,10 @@ namespace NodeNetwork.Views
                     }
                 }).DisposeWith(d);
 
-                this.Events().DragLeave.Subscribe(_ => ViewModel.PendingNode = null).DisposeWith(d);
+                Observable.FromEventPattern<DragEventHandler, DragEventArgs>(
+                    h => this.DragLeave += h,
+                    h => this.DragLeave -= h)
+                    .Subscribe(_ => ViewModel.PendingNode = null).DisposeWith(d);
             });
         }
 
@@ -396,7 +431,11 @@ namespace NodeNetwork.Views
                 this.OneWayBind(ViewModel, vm => vm.SelectionRectangle.Rectangle.Height, v => v.selectionRectangle.Height).DisposeWith(d);
                 this.OneWayBind(ViewModel, vm => vm.SelectionRectangle.IsVisible, v => v.selectionRectangle.Visibility).DisposeWith(d);
 
-                this.Events().PreviewMouseDown.Subscribe(e =>
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => this.PreviewMouseDown += h,
+                    h => this.PreviewMouseDown -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     if (ViewModel != null && StartSelectionRectangleGesture.Matches(this, e))
                     {
@@ -408,7 +447,11 @@ namespace NodeNetwork.Views
                     }
                 }).DisposeWith(d);
 
-                this.Events().MouseMove.Subscribe(e =>
+                Observable.FromEventPattern<MouseEventHandler, MouseEventArgs>(
+                    h => this.MouseMove += h,
+                    h => this.MouseMove -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     if (ViewModel != null && ViewModel.SelectionRectangle.IsVisible)
                     {
@@ -417,7 +460,11 @@ namespace NodeNetwork.Views
                     }
                 }).DisposeWith(d);
 
-                this.Events().MouseUp.Subscribe(e =>
+                Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
+                    h => this.MouseUp += h,
+                    h => this.MouseUp -= h)
+                    .Select(pattern => pattern.EventArgs)
+                    .Subscribe(e =>
                 {
                     if (ViewModel != null && ViewModel.SelectionRectangle.IsVisible)
                     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -172,9 +172,13 @@ namespace NodeNetwork.Views
 
         protected virtual void SetupLayoutEvent()
         {
-	        this.WhenActivated(d =>
-	        {
-		        this.Events().LayoutUpdated.Subscribe(e =>
+					this.WhenActivated(d =>
+					{
+						Observable.FromEventPattern<EventHandler, EventArgs>(
+										h => this.LayoutUpdated += h,
+										h => this.LayoutUpdated -= h)
+										.Select(pattern => pattern.EventArgs)
+										.Subscribe(e =>
 		        {
 			        //Update endpoint center point
 			        if (ViewModel == null)
