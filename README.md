@@ -3,7 +3,7 @@
 
 #### FINE is a .NET C# WPF library that provides a node editor component.
 
-> **Credits:** FINE is a continuation of and heavily based on the original [NodeNetwork](https://github.com/Wouterdek/NodeNetwork) project created by **Wouter De Keersmaecker**. All credits for the original implementation go to him.
+> **Credits:** FINE is heavily based on the original [NodeNetwork](https://github.com/Wouterdek/NodeNetwork) project created by **Wouter De Keersmaecker**. All credits for the original implementation go to him.
 
 Here is a demo of a calculator example application:
 
