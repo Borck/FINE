@@ -1,12 +1,9 @@
-﻿using System.Windows.Controls.Primitives;
+namespace NodeNetwork.Views.Controls;
 
-namespace NodeNetwork.Views.Controls
-{
-    public partial class ArrowToggleButton : ToggleButton
-    {
-        public ArrowToggleButton()
-        {
-            InitializeComponent();
-        }
-    }
+using System.Windows.Controls.Primitives;
+
+public partial class ArrowToggleButton : ToggleButton {
+  public ArrowToggleButton() {
+    InitializeComponent();
+  }
 }

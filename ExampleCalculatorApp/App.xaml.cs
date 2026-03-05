@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+namespace ExampleCalculatorApp;
+
 using System.Windows;
 using NodeNetwork;
+using ReactiveUI;
+using ReactiveUI.Builder;
 
-namespace ExampleCalculatorApp
-{
-    public partial class App : Application
-    {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-            NNViewRegistrar.RegisterSplat();
-        }
-    }
+public partial class App : Application {
+  protected override void OnStartup(StartupEventArgs e) {
+    base.OnStartup(e);
+
+    RxAppBuilder.CreateReactiveUIBuilder()
+        .WithWpf()
+        .BuildApp();
+
+    NNViewRegistrar.RegisterSplat();
+  }
 }

@@ -1,0 +1,207 @@
+@namespace NodeNetwork.Blazor.Components
+@implements IDisposable
+
+<div class="nn-editor" tabindex="0" @onkeydown="OnKeyDown" @onwheel="OnWheel"
+     @onpointerdown="OnCanvasPointerDown" @onpointermove="OnCanvasPointerMove" @onpointerup="OnCanvasPointerUp">
+    <div class="nn-viewport" style="@ViewportStyle">
+        <svg class="nn-connections" width="100%" height="100%">
+            @foreach (var connection in State.Network.Connections)
+            {
+                var points = GetConnectionPoints(connection);
+                if (points is not null)
+                {
+                    <path class="nn-connection" d="@BuildBezier(points.Value.Start, points.Value.End)"></path>
+                }
+            }
+        </svg>
+
+        @foreach (var node in State.Network.Nodes)
+        {
+            <article class="nn-node @(node.IsSelected ? "selected" : null)"
+                     style="left:@node.Position.X.ToString(System.Globalization.CultureInfo.InvariantCulture)px;top:@node.Position.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)px;width:@node.Size.Width.ToString(System.Globalization.CultureInfo.InvariantCulture)px;"
+                     @onpointerdown="(e => OnNodePointerDown(node, e))">
+                <header class="nn-node-header">
+                    <button class="nn-node-collapse" @onclick="(() => ToggleCollapse(node))">@(node.IsCollapsed ? "+" : "−")</button>
+                    <span>@node.Name</span>
+                </header>
+
+                @if (!node.IsCollapsed)
+                {
+                    <div class="nn-node-body">
+                        <ul class="nn-ports">
+                            @foreach (var input in node.Inputs.Where(p => p.IsVisible).OrderBy(p => p.SortIndex))
+                            {
+                                <li class="nn-port input" @onclick="(() => OnPortClicked(input.Id))">◉ @input.DisplayName</li>
+                            }
+                        </ul>
+                        <ul class="nn-ports align-right">
+                            @foreach (var output in node.Outputs.Where(p => p.IsVisible).OrderBy(p => p.SortIndex))
+                            {
+                                <li class="nn-port output" @onclick="(() => OnPortClicked(output.Id))">@output.DisplayName ◉</li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </article>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(State.LastError))
+    {
+        <div class="nn-error">@State.LastError</div>
+    }
+</div>
+
+@code {
+    private const double HeaderHeight = 34;
+    private const double PortRowHeight = 28;
+
+    private Guid? _dragNodeId;
+    private CanvasPoint _dragOffset;
+    private bool _isPanning;
+    private double _lastClientX;
+    private double _lastClientY;
+
+    [Parameter, EditorRequired]
+    public required NetworkEditorState State { get; init; }
+
+    private string ViewportStyle
+        => $"transform: translate({State.Network.Pan.X.ToString(System.Globalization.CultureInfo.InvariantCulture)}px, {State.Network.Pan.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)}px) scale({State.Network.Zoom.ToString(System.Globalization.CultureInfo.InvariantCulture)});";
+
+    protected override void OnInitialized()
+    {
+        State.Changed += HandleStateChanged;
+    }
+
+    public void Dispose()
+    {
+        State.Changed -= HandleStateChanged;
+    }
+
+    private void HandleStateChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnNodePointerDown(NodeModel node, PointerEventArgs args)
+    {
+        State.SetNodeSelected(node.Id, true);
+        _dragNodeId = node.Id;
+        _dragOffset = new CanvasPoint(args.ClientX / State.Network.Zoom - node.Position.X, args.ClientY / State.Network.Zoom - node.Position.Y);
+    }
+
+    private void OnCanvasPointerDown(PointerEventArgs args)
+    {
+        _lastClientX = args.ClientX;
+        _lastClientY = args.ClientY;
+
+        if (args.Button == 1)
+        {
+            _isPanning = true;
+            return;
+        }
+
+        if (_dragNodeId is null)
+        {
+            foreach (var node in State.Network.Nodes)
+            {
+                node.IsSelected = false;
+            }
+
+            State.CancelPendingConnection();
+        }
+    }
+
+    private void OnCanvasPointerMove(PointerEventArgs args)
+    {
+        if (_isPanning)
+        {
+            var dx = args.ClientX - _lastClientX;
+            var dy = args.ClientY - _lastClientY;
+            State.Pan(new CanvasPoint(dx, dy));
+            _lastClientX = args.ClientX;
+            _lastClientY = args.ClientY;
+            return;
+        }
+
+        if (_dragNodeId is null)
+        {
+            return;
+        }
+
+        var node = State.Network.Nodes.FirstOrDefault(n => n.Id == _dragNodeId.Value);
+        if (node is null)
+        {
+            return;
+        }
+
+        var position = new CanvasPoint(args.ClientX / State.Network.Zoom - _dragOffset.X, args.ClientY / State.Network.Zoom - _dragOffset.Y);
+        State.MoveNode(node.Id, position);
+    }
+
+    private void OnCanvasPointerUp(PointerEventArgs _)
+    {
+        _dragNodeId = null;
+        _isPanning = false;
+    }
+
+    private void OnPortClicked(Guid portId)
+    {
+        State.TryCompleteConnection(portId);
+    }
+
+    private void OnWheel(WheelEventArgs args)
+    {
+        State.Zoom(args.DeltaY < 0 ? 0.05 : -0.05);
+    }
+
+    private void ToggleCollapse(NodeModel node)
+    {
+        node.IsCollapsed = !node.IsCollapsed;
+        State.MoveNode(node.Id, node.Position);
+    }
+
+    private void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Delete" || args.Key == "Backspace")
+        {
+            State.DeleteSelectedNodes();
+        }
+
+        if (args.Key == "Escape")
+        {
+            State.CancelPendingConnection();
+        }
+    }
+
+    private (CanvasPoint Start, CanvasPoint End)? GetConnectionPoints(ConnectionModel connection)
+    {
+        var outputPort = State.FindPort(connection.OutputPortId);
+        var inputPort = State.FindPort(connection.InputPortId);
+        if (outputPort is null || inputPort is null)
+        {
+            return null;
+        }
+
+        var outputPoint = GetPortAnchor(outputPort);
+        var inputPoint = GetPortAnchor(inputPort);
+        return (outputPoint, inputPoint);
+    }
+
+    private CanvasPoint GetPortAnchor(NodePortModel port)
+    {
+        var node = State.Network.Nodes.First(n => n.Id == port.NodeId);
+        var orderedList = port.Direction == PortDirection.Input
+            ? node.Inputs.Where(p => p.IsVisible).OrderBy(p => p.SortIndex).ToList()
+            : node.Outputs.Where(p => p.IsVisible).OrderBy(p => p.SortIndex).ToList();
+
+        var index = orderedList.FindIndex(p => p.Id == port.Id);
+        var y = node.Position.Y + HeaderHeight + (Math.Max(0, index) + 0.5) * PortRowHeight;
+        var x = port.Direction == PortDirection.Input ? node.Position.X : node.Position.X + node.Size.Width;
+        return new CanvasPoint(x, y);
+    }
+
+    private static string BuildBezier(CanvasPoint start, CanvasPoint end)
+    {
+        var c1x = start.X + 70;
+        var c2x = end.X - 70;
+        return $"M {start.X.ToString(System.Globalization.CultureInfo.InvariantCulture)} {start.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)} C {c1x.ToString(System.Globalization.CultureInfo.InvariantCulture)} {start.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {c2x.ToString(System.Globalization.CultureInfo.InvariantCulture)} {end.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {end.X.ToString(System.Globalization.CultureInfo.InvariantCulture)} {end.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+    }
+}
