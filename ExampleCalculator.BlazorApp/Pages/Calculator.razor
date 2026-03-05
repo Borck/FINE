@@ -1,0 +1,239 @@
+@page "/"
+@page "/calculator"
+
+@using System.Globalization
+@using FINE.Blazor.Models
+@using FINE.Blazor.Services
+@using FINE.Toolkit.Blazor.NodeList
+@using FINE.Toolkit.Blazor.ValueNode
+@using FINE.Toolkit.Blazor
+@using NodeNetwork.Blazor.Components
+
+<PageTitle>Calculator Node Editor</PageTitle>
+
+<div style="display: flex; height: calc(100vh - 60px); width: 100vw; font-family: sans-serif;">
+    <!-- Sidebar: Node List -->
+    <div style="width: 250px; background: #fafafa; border-right: 1px solid #ccc; display: flex; flex-direction: column;">
+        <h3 style="padding: 1rem; margin: 0; background: #e0e0e0; border-bottom: 1px solid #ccc;">Nodes</h3>
+        <div style="padding: 1rem; flex: 1; overflow-y: auto;">
+            @foreach (var template in _listModel.NodeTemplates)
+            {
+                var instance = template.Instance;
+                <div style="background: white; border: 1px solid #ccc; padding: 0.5rem; margin-bottom: 0.5rem; cursor: pointer; user-select: none;"
+                     @onclick="() => AddNode(template)">
+                    @instance.Name
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Main area: node editor -->
+    <div style="flex: 1; position: relative;">
+        <NodeEditor State="@_editorState" />
+    </div>
+
+    <!-- Inspector / Result -->
+    <div style="width: 300px; background: #fafafa; border-left: 1px solid #ccc; padding: 1rem; display: flex; flex-direction: column;">
+        <h3>Selection Editor</h3>
+        @if (_selectedNode != null)
+        {
+            <p><strong>@_selectedNode.Name</strong></p>
+            @if (_constantEditors.TryGetValue(_selectedNode.Id, out var editor))
+            {
+                <label>
+                    Value:
+                    <input type="number" value="@editor.Value" @onchange="(e) => UpdateConstantValue(editor, e.Value)" />
+                </label>
+            }
+            else if (_selectedNode.Name == "Output Node")
+            {
+                <p>This node displays the final graph evaluation.</p>
+            }
+            else
+            {
+                 <p>This node has no settings to edit.</p>
+            }
+        }
+        else
+        {
+            <p><em>Select a node to edit.</em></p>
+        }
+        
+        <hr style="margin: 1rem 0;" />
+        <h3>Result</h3>
+        <div style="font-size: 2rem; color: #0078d7;">
+            @_resultValue
+        </div>
+    </div>
+</div>
+
+@code {
+    private NetworkEditorState _editorState = default!;
+    private NodeListModel _listModel = new();
+    private ValuePortRegistry _registry = new();
+    private Dictionary<Guid, ValueEditorModel<int?>> _constantEditors = new();
+    
+    // Evaluators map to calculate the graph
+    private Dictionary<Guid, Func<int?>> _nodeEvaluators = new();
+    
+    private NodeModel? _selectedNode;
+    private string _resultValue = "---";
+
+    protected override void OnInitialized()
+    {
+        _editorState = new NetworkEditorState(new NetworkModel());
+        _editorState.Changed += HandleStateChanged;
+        
+        _listModel.AddNodeType(() => CreateSumNode().Node);
+        _listModel.AddNodeType(() => CreateSubtractionNode().Node);
+        _listModel.AddNodeType(() => CreateProductNode().Node);
+        _listModel.AddNodeType(() => CreateDivisionNode().Node);
+        _listModel.AddNodeType(() => CreateConstantNode().Node);
+        _listModel.AddNodeType(() => CreateOutputNode().Node);
+        
+        // Add one output node initially
+        var outNode = CreateOutputNode().Node;
+        outNode.Position = new CanvasPoint(400, 100);
+        _editorState.AddNode(outNode);
+    }
+
+    private void AddNode(NodeTemplate template)
+    {
+        var node = template.Factory();
+        node.Position = new CanvasPoint(150 - _editorState.Network.Pan.X, 100 - _editorState.Network.Pan.Y);
+        _editorState.AddNode(node);
+        EvaluateGraph();
+    }
+
+    private void HandleStateChanged()
+    {
+        _selectedNode = _editorState.Network.Nodes.FirstOrDefault(n => n.IsSelected);
+        EvaluateGraph();
+        StateHasChanged();
+    }
+
+    private void UpdateConstantValue(ValueEditorModel<int?> editor, object? newValue)
+    {
+        if (int.TryParse(newValue?.ToString(), out var val))
+        {
+            editor.SetValue(val);
+            EvaluateGraph();
+        }
+    }
+
+    private void EvaluateGraph()
+    {
+        // Simple recursive cycle-safe pull-based evaluation
+        _resultValue = "Error"; // Default error if no Output node found
+        var outputNode = _editorState.Network.Nodes.FirstOrDefault(n => n.Name == "Output Node");
+        
+        if (outputNode != null && outputNode.Inputs.Count > 0)
+        {
+            var value = EvaluateRecursively(outputNode.Inputs[0].Id, new HashSet<Guid>());
+            _resultValue = value?.ToString(CultureInfo.InvariantCulture) ?? "0";
+        }
+        else
+        {
+            _resultValue = "---";
+        }
+    }
+
+    private int? EvaluateRecursively(Guid inputPortId, HashSet<Guid> visitedNodes)
+    {
+        var connection = _editorState.Network.Connections.FirstOrDefault(c => c.InputPortId == inputPortId);
+        if (connection == null) return 0; // Unconnected inputs default to 0
+
+        var sourceNode = _editorState.Network.Nodes.FirstOrDefault(n => n.GetPorts().Any(p => p.Id == connection.OutputPortId));
+        if (sourceNode == null) return 0;
+        
+        // Cycle detection
+        if (!visitedNodes.Add(sourceNode.Id)) return null;
+
+        if (_nodeEvaluators.TryGetValue(sourceNode.Id, out var evaluator))
+        {
+            // Execute the evaluator (it internally calls EvaluateRecursively)
+            // But how do we pass visitedNodes to the evaluator closures?
+            // Actually, we need to pass a context. To keep it simple, we'll use a hack below.
+            // But a better approach is implementing evaluation properly:
+        }
+        
+        // Simple graph evaluation directly since this is an example:
+        if (sourceNode.Name == "Constant Node") 
+        {
+            return _constantEditors.TryGetValue(sourceNode.Id, out var editor) ? editor.Value : 0;
+        }
+        
+        if (sourceNode.Name == "Sum Node") 
+            return (EvaluateRecursively(sourceNode.Inputs[0].Id, new HashSet<Guid>(visitedNodes)) ?? 0) 
+                 + (EvaluateRecursively(sourceNode.Inputs[1].Id, new HashSet<Guid>(visitedNodes)) ?? 0);
+                 
+        if (sourceNode.Name == "Subtraction Node") 
+            return (EvaluateRecursively(sourceNode.Inputs[0].Id, new HashSet<Guid>(visitedNodes)) ?? 0) 
+                 - (EvaluateRecursively(sourceNode.Inputs[1].Id, new HashSet<Guid>(visitedNodes)) ?? 0);
+                 
+        if (sourceNode.Name == "Product Node") 
+            return (EvaluateRecursively(sourceNode.Inputs[0].Id, new HashSet<Guid>(visitedNodes)) ?? 0) 
+                 * (EvaluateRecursively(sourceNode.Inputs[1].Id, new HashSet<Guid>(visitedNodes)) ?? 0);
+                 
+        if (sourceNode.Name == "Division Node") 
+        {
+            var a = EvaluateRecursively(sourceNode.Inputs[0].Id, new HashSet<Guid>(visitedNodes)) ?? 0;
+            var b = EvaluateRecursively(sourceNode.Inputs[1].Id, new HashSet<Guid>(visitedNodes)) ?? 0;
+            if (b == 0) return null; // Error / Division by zero
+            return a / b;
+        }
+
+        return 0;
+    }
+
+    // --- Node Factories ---
+    
+    private (NodeModel Node, ValueNodeOutputModel<int?> Output) CreateMathNode(string name)
+    {
+        var node = new NodeModel { Name = name, Id = Guid.NewGuid() };
+        
+        var in1Id = Guid.NewGuid();
+        var in1 = new NodePortModel { Id = in1Id, NodeId = node.Id, Key = "in1", DisplayName = "Input 1", DataType = "int", Direction = PortDirection.Input, Capacity = PortCapacity.Multi };
+        
+        var in2Id = Guid.NewGuid();
+        var in2 = new NodePortModel { Id = in2Id, NodeId = node.Id, Key = "in2", DisplayName = "Input 2", DataType = "int", Direction = PortDirection.Input, Capacity = PortCapacity.Multi };
+        
+        var out1Id = Guid.NewGuid();
+        var out1 = new NodePortModel { Id = out1Id, NodeId = node.Id, Key = "out1", DisplayName = "Result", DataType = "int", Direction = PortDirection.Output, Capacity = PortCapacity.Multi };
+
+        node.Inputs.Add(in1);
+        node.Inputs.Add(in2);
+        node.Outputs.Add(out1);
+
+        return (node, new ValueNodeOutputModel<int?> { Port = out1 });
+    }
+
+    private (NodeModel Node, ValueNodeOutputModel<int?> Output) CreateSumNode() => CreateMathNode("Sum Node");
+    private (NodeModel Node, ValueNodeOutputModel<int?> Output) CreateSubtractionNode() => CreateMathNode("Subtraction Node");
+    private (NodeModel Node, ValueNodeOutputModel<int?> Output) CreateProductNode() => CreateMathNode("Product Node");
+    private (NodeModel Node, ValueNodeOutputModel<int?> Output) CreateDivisionNode() => CreateMathNode("Division Node");
+
+    private (NodeModel Node, ValueNodeOutputModel<int?> Output) CreateConstantNode()
+    {
+        var node = new NodeModel { Name = "Constant Node", Id = Guid.NewGuid() };
+        var out1Id = Guid.NewGuid();
+        var out1 = new NodePortModel { Id = out1Id, NodeId = node.Id, Key = "out1", DisplayName = "Value", DataType = "int", Direction = PortDirection.Output, Capacity = PortCapacity.Multi };
+        node.Outputs.Add(out1);
+
+        var editor = new ValueEditorModel<int?> { };
+        editor.SetValue(0);
+        _constantEditors[node.Id] = editor;
+
+        return (node, new ValueNodeOutputModel<int?> { Port = out1 });
+    }
+
+    private (NodeModel Node, ValueNodeInputModel<int?> Input) CreateOutputNode()
+    {
+        var node = new NodeModel { Name = "Output Node", Id = Guid.NewGuid() };
+        var in1Id = Guid.NewGuid();
+        var in1 = new NodePortModel { Id = in1Id, NodeId = node.Id, Key = "in1", DisplayName = "Result Input", DataType = "int", Direction = PortDirection.Input, Capacity = PortCapacity.Multi };
+        node.Inputs.Add(in1);
+
+        return (node, new ValueNodeInputModel<int?> { Port = in1 });
+    }
+}
