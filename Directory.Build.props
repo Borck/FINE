@@ -1,5 +1,14 @@
 <Project>
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <Version>1.0.0-A1</Version>
+    <Authors>Christian Borck</Authors>
+    <PackageTags>reactiveui node network editor node-editor graph</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://www.github.com/Borck/FINE</RepositoryUrl>
+    <RepositoryType>Github</RepositoryType>
+    <PackageIconUrl>https://raw.githubusercontent.com/Borck/FINE/gh-pages/img/logo.png</PackageIconUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <RootNamespace>FINE</RootNamespace>
   </PropertyGroup>
 </Project>
