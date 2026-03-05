@@ -132,11 +132,11 @@ public partial class ShaderPreviewView : IViewFor<ShaderPreviewViewModel> {
   }
 
   private void LoadMeshes() {
-    using (var stream = new StreamReader(typeof(ShaderPreviewView).Assembly.GetManifestResourceStream("ExampleShaderEditorApp.Resources.Models.cube.obj"))) {
+    using (var stream = new StreamReader(typeof(ShaderPreviewView).Assembly.GetManifestResourceStream("ExampleShaderEditor.WPFApp.Resources.Models.cube.obj"))) {
       _cube = WavefrontLoader.Load(stream);
     }
 
-    using (var stream = new StreamReader(typeof(ShaderPreviewView).Assembly.GetManifestResourceStream("ExampleShaderEditorApp.Resources.Models.suzanne.obj"))) {
+    using (var stream = new StreamReader(typeof(ShaderPreviewView).Assembly.GetManifestResourceStream("ExampleShaderEditor.WPFApp.Resources.Models.suzanne.obj"))) {
       _suzanne = WavefrontLoader.Load(stream);
     }
   }

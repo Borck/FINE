@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
-    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFrameworks-WPF>net10.0-windows10.0.19041.0</TargetFrameworks-WPF>
     <Version>1.0.0-alpha1</Version>
     <Authors>Christian Borck</Authors>
     <PackageTags>reactiveui node network editor node-editor graph</PackageTags>
@@ -10,5 +11,6 @@
     <PackageIconUrl>https://raw.githubusercontent.com/Borck/FINE/gh-pages/img/logo.png</PackageIconUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>FINE</RootNamespace>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 </Project>

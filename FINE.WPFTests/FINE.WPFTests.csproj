@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworks-WPF)</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
@@ -13,9 +13,10 @@
     <PackageReference Include="ReactiveUI" Version="23.1.8" />
     <PackageReference Include="ReactiveUI.Testing" Version="23.1.8" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\ExampleCalculatorApp\ExampleCalculatorApp.csproj" />
     <ProjectReference Include="..\FINEToolkit.WPF\FINEToolkit.WPF.csproj" />
+    <ProjectReference Include="..\FINE.WPF\FINE.WPF.csproj" />
   </ItemGroup>
 
 </Project>

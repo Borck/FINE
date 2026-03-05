@@ -50,8 +50,8 @@ public class ShaderPreviewViewModel : ReactiveObject {
     PreviewObject = new RenderObject();
     WorldRoot.AddChild(PreviewObject);
 
-    VertexShaderSource = ReadResource("ExampleShaderEditorApp.Resources.Shaders.vertex.glsl");
-    FragmentShaderSource = ReadResource("ExampleShaderEditorApp.Resources.Shaders.fragment.glsl");
+    VertexShaderSource = ReadResource("ExampleShaderEditor.WPFApp.Resources.Shaders.vertex.glsl");
+    FragmentShaderSource = ReadResource("ExampleShaderEditor.WPFApp.Resources.Shaders.fragment.glsl");
   }
 
   private string[] ReadResource(string path) {

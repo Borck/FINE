@@ -1,5 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFrameworks>$(TargetFrameworks-WPF)</TargetFrameworks>
     <OutputType>Library</OutputType>
     <RootNamespace>FINE.Toolkit</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
