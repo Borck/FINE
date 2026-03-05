@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Data;
 using ExampleShaderEditorApp.ViewModels;
-using NodeNetwork.Toolkit.ContextMenu;
+using FINE.Toolkit.ContextMenu;
 using ReactiveUI;
 
 public partial class MainWindow : Window, IViewFor<MainViewModel> {

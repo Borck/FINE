@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using ExampleShaderEditorApp.Model;
 using ExampleShaderEditorApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class Vec2EditorViewModel : ValueEditorViewModel<ShaderFunc> {

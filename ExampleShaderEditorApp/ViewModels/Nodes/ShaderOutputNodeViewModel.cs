@@ -2,7 +2,7 @@ namespace ExampleShaderEditorApp.ViewModels.Nodes;
 
 using DynamicData;
 using ExampleShaderEditorApp.Model;
-using NodeNetwork.Views;
+using FINE.Views;
 using ReactiveUI;
 
 public class ShaderOutputNodeViewModel : ShaderNodeViewModel {

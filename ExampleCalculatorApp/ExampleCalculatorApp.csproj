@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <OutputType>WinExe</OutputType>
@@ -8,8 +8,8 @@
     <StartupObject>ExampleCalculatorApp.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NodeNetworkToolkit\NodeNetworkToolkit.csproj" />
-    <ProjectReference Include="..\NodeNetwork\NodeNetwork.csproj" />
+    <ProjectReference Include="..\FINEToolkit.WPF\FINEToolkit.WPF.csproj" />
+    <ProjectReference Include="..\FINE.WPF\FINE.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />

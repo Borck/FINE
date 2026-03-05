@@ -5,8 +5,8 @@ using System.Reactive.Linq;
 using DynamicData;
 using ExampleShaderEditorApp.Model;
 using ExampleShaderEditorApp.ViewModels.Editors;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.Views;
+using FINE.Toolkit.ValueNode;
+using FINE.Views;
 using ReactiveUI;
 
 public class Vec3MathNodeViewModel : ShaderNodeViewModel {

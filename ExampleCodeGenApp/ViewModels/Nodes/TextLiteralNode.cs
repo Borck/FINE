@@ -7,7 +7,7 @@ using ExampleCodeGenApp.Model;
 using ExampleCodeGenApp.Model.Compiler;
 using ExampleCodeGenApp.ViewModels.Editors;
 using ExampleCodeGenApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class TextLiteralNode : CodeGenNodeViewModel {

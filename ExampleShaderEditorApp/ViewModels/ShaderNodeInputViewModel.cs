@@ -3,10 +3,10 @@ namespace ExampleShaderEditorApp.ViewModels;
 using System;
 using System.Linq;
 using ExampleShaderEditorApp.Model;
-using NodeNetwork;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
-using NodeNetwork.Views;
+using FINE;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
+using FINE.Views;
 using ReactiveUI;
 
 public class ShaderNodeInputViewModel : ValueNodeInputViewModel<ShaderFunc> {

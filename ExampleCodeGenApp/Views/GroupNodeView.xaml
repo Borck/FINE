@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="ExampleCodeGenApp.Views.GroupNodeView"
+<UserControl x:Class="ExampleCodeGenApp.Views.GroupNodeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ExampleCodeGenApp.Views"
-             xmlns:views="clr-namespace:NodeNetwork.Views;assembly=NodeNetwork"
-             xmlns:newEndpointDropPanel="clr-namespace:NodeNetwork.Toolkit.Group.AddEndpointDropPanel;assembly=NodeNetworkToolkit"
+             xmlns:views="clr-namespace:FINE.Views;assembly=FINE.WPF"
+             xmlns:newEndpointDropPanel="clr-namespace:FINE.Toolkit.Group.AddEndpointDropPanel;assembly=FINEToolkit.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <views:NodeView x:Name="NodeView">

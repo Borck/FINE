@@ -5,10 +5,10 @@ using System.Reactive.Linq;
 using DynamicData;
 using ExampleCalculatorApp.ViewModels.Nodes;
 using ExampleCalculatorApp.Views;
-using NodeNetwork;
-using NodeNetwork.Toolkit;
-using NodeNetwork.Toolkit.NodeList;
-using NodeNetwork.ViewModels;
+using FINE;
+using FINE.Toolkit;
+using FINE.Toolkit.NodeList;
+using FINE.ViewModels;
 using ReactiveUI;
 
 public class MainViewModel : ReactiveObject {

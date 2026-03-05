@@ -1,14 +1,14 @@
-﻿<Window
+<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExampleCalculatorApp"
         xmlns:reactiveUi="http://reactiveui.net"
-        xmlns:nodeList="clr-namespace:NodeNetwork.Toolkit.NodeList;assembly=NodeNetworkToolkit"
+        xmlns:nodeList="clr-namespace:FINE.Toolkit.NodeList;assembly=FINEToolkit.WPF"
         x:Class="ExampleCalculatorApp.Views.MainWindow"
         mc:Ignorable="d"
-        Title="NodeNetwork example" Height="700" Width="1000">
+        Title="FINE.WPF example" Height="700" Width="1000">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>

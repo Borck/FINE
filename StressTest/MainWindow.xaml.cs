@@ -7,12 +7,12 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using DynamicData;
-using NodeNetwork;
-using NodeNetwork.Toolkit;
-using NodeNetwork.Toolkit.Layout.ForceDirected;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
-using NodeNetwork.Views;
+using FINE;
+using FINE.Toolkit;
+using FINE.Toolkit.Layout.ForceDirected;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
+using FINE.Views;
 using ReactiveUI;
 
 /// <summary>

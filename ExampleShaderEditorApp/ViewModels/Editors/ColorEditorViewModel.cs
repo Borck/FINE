@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Windows.Media;
 using ExampleShaderEditorApp.Model;
 using ExampleShaderEditorApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class ColorEditorViewModel : ValueEditorViewModel<ShaderFunc> {

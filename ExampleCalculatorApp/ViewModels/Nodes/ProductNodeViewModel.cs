@@ -2,9 +2,9 @@ namespace ExampleCalculatorApp.ViewModels.Nodes;
 
 using System.Reactive.Linq;
 using DynamicData;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
-using NodeNetwork.Views;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
+using FINE.Views;
 using ReactiveUI;
 
 public class ProductNodeViewModel : NodeViewModel {

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -18,8 +18,8 @@
     <Resource Include="Resources\Icons\colorwheel.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NodeNetworkToolkit\NodeNetworkToolkit.csproj" />
-    <ProjectReference Include="..\NodeNetwork\NodeNetwork.csproj" />
+    <ProjectReference Include="..\FINEToolkit.WPF\FINEToolkit.WPF.csproj" />
+    <ProjectReference Include="..\FINE.WPF\FINE.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\eye.png" />

@@ -6,11 +6,11 @@ using System.Reactive.Linq;
 using DynamicData;
 using ExampleCodeGenApp.Model;
 using ExampleCodeGenApp.ViewModels.Nodes;
-using NodeNetwork.Toolkit.BreadcrumbBar;
-using NodeNetwork.Toolkit.Group;
-using NodeNetwork.Toolkit.Layout.ForceDirected;
-using NodeNetwork.Toolkit.NodeList;
-using NodeNetwork.ViewModels;
+using FINE.Toolkit.BreadcrumbBar;
+using FINE.Toolkit.Group;
+using FINE.Toolkit.Layout.ForceDirected;
+using FINE.Toolkit.NodeList;
+using FINE.ViewModels;
 using ReactiveUI;
 
 class NetworkBreadcrumb : BreadcrumbViewModel {

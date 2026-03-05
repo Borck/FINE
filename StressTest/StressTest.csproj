@@ -6,8 +6,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NodeNetworkToolkit\NodeNetworkToolkit.csproj" />
-    <ProjectReference Include="..\NodeNetwork\NodeNetwork.csproj" />
+    <ProjectReference Include="..\FINEToolkit.WPF\FINEToolkit.WPF.csproj" />
+    <ProjectReference Include="..\FINE.WPF\FINE.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ReactiveUI" Version="23.1.8" />

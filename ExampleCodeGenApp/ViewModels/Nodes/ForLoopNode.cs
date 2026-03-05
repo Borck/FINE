@@ -7,8 +7,8 @@ using DynamicData;
 using ExampleCodeGenApp.Model;
 using ExampleCodeGenApp.Model.Compiler;
 using ExampleCodeGenApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
 using ReactiveUI;
 
 public class ForLoopNode : CodeGenNodeViewModel {

@@ -1,7 +1,7 @@
 namespace ExampleCalculatorApp;
 
 using System.Windows;
-using NodeNetwork;
+using FINE;
 using ReactiveUI;
 using ReactiveUI.Builder;
 

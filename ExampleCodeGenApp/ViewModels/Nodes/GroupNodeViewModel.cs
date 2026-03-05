@@ -2,8 +2,8 @@ namespace ExampleCodeGenApp.ViewModels.Nodes;
 
 using System;
 using ExampleCodeGenApp.Views;
-using NodeNetwork.Toolkit.Group.AddEndpointDropPanel;
-using NodeNetwork.ViewModels;
+using FINE.Toolkit.Group.AddEndpointDropPanel;
+using FINE.ViewModels;
 using ReactiveUI;
 
 public class GroupNodeViewModel : CodeGenNodeViewModel {

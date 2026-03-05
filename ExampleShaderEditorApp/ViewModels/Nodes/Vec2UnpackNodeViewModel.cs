@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using DynamicData;
 using ExampleShaderEditorApp.Model;
-using NodeNetwork.Views;
+using FINE.Views;
 using ReactiveUI;
 
 public class Vec2UnpackNodeViewModel : ShaderNodeViewModel {

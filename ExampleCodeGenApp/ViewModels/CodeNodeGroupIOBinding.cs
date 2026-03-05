@@ -2,9 +2,9 @@ namespace ExampleCodeGenApp.ViewModels;
 
 using DynamicData;
 using ExampleCodeGenApp.ViewModels.Nodes;
-using NodeNetwork.Toolkit.Group;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
+using FINE.Toolkit.Group;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
 
 public class CodeNodeGroupIOBinding : ValueNodeGroupIOBinding {
   public CodeNodeGroupIOBinding(NodeViewModel groupNode, NodeViewModel entranceNode, NodeViewModel exitNode) : base(groupNode, entranceNode, exitNode) {

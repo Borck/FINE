@@ -1,8 +1,8 @@
 namespace ExampleCodeGenApp.ViewModels;
 
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
-using NodeNetwork.Views;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
+using FINE.Views;
 using ReactiveUI;
 
 public class CodeGenInputViewModel<T> : ValueNodeInputViewModel<T> {

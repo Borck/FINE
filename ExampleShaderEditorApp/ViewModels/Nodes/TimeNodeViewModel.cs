@@ -3,7 +3,7 @@ namespace ExampleShaderEditorApp.ViewModels.Nodes;
 using System.Reactive.Linq;
 using DynamicData;
 using ExampleShaderEditorApp.Model;
-using NodeNetwork.Views;
+using FINE.Views;
 using ReactiveUI;
 
 public class TimeNodeViewModel : ShaderNodeViewModel {

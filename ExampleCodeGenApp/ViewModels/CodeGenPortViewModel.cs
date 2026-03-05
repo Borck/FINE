@@ -1,6 +1,6 @@
 namespace ExampleCodeGenApp.ViewModels;
 
-using NodeNetwork.ViewModels;
+using FINE.ViewModels;
 using ReactiveUI;
 
 public enum PortType {

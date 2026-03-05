@@ -5,8 +5,8 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using ExampleCodeGenApp.Views.Editors;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.ViewModels;
+using FINE.Toolkit.ValueNode;
+using FINE.ViewModels;
 using ReactiveUI;
 
 /// <summary>

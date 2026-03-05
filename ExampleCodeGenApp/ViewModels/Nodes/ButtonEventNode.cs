@@ -3,7 +3,7 @@ namespace ExampleCodeGenApp.ViewModels.Nodes;
 using DynamicData;
 using ExampleCodeGenApp.Model.Compiler;
 using ExampleCodeGenApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class ButtonEventNode : CodeGenNodeViewModel {

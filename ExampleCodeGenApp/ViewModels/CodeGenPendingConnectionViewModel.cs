@@ -1,7 +1,7 @@
 namespace ExampleCodeGenApp.ViewModels;
 
 using ExampleCodeGenApp.Views;
-using NodeNetwork.ViewModels;
+using FINE.ViewModels;
 using ReactiveUI;
 
 public class CodeGenPendingConnectionViewModel : PendingConnectionViewModel {

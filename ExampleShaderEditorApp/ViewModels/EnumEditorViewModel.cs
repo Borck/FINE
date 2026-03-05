@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using ExampleShaderEditorApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class EnumEditorViewModel : ValueEditorViewModel<object> {

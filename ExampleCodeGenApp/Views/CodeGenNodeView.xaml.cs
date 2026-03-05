@@ -5,7 +5,7 @@ using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Media;
 using ExampleCodeGenApp.ViewModels;
-using NodeNetwork.Views;
+using FINE.Views;
 using ReactiveUI;
 
 public partial class CodeGenNodeView : IViewFor<CodeGenNodeViewModel> {

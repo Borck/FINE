@@ -1,7 +1,7 @@
 namespace ExampleCodeGenApp.ViewModels.Editors;
 
 using ExampleCodeGenApp.Views.Editors;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class StringValueEditorViewModel : ValueEditorViewModel<string> {

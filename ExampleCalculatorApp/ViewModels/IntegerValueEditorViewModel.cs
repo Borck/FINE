@@ -1,7 +1,7 @@
 namespace ExampleCalculatorApp.ViewModels;
 
 using ExampleCalculatorApp.Views;
-using NodeNetwork.Toolkit.ValueNode;
+using FINE.Toolkit.ValueNode;
 using ReactiveUI;
 
 public class IntegerValueEditorViewModel : ValueEditorViewModel<int?> {

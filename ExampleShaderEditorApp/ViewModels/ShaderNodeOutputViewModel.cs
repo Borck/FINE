@@ -2,8 +2,8 @@ namespace ExampleShaderEditorApp.ViewModels;
 
 using System;
 using ExampleShaderEditorApp.Model;
-using NodeNetwork.Toolkit.ValueNode;
-using NodeNetwork.Views;
+using FINE.Toolkit.ValueNode;
+using FINE.Views;
 using ReactiveUI;
 
 public class ShaderNodeOutputViewModel : ValueNodeOutputViewModel<ShaderFunc> {

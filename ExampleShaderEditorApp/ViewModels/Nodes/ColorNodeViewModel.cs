@@ -3,7 +3,7 @@ namespace ExampleShaderEditorApp.ViewModels.Nodes;
 using DynamicData;
 using ExampleShaderEditorApp.Model;
 using ExampleShaderEditorApp.ViewModels.Editors;
-using NodeNetwork.Views;
+using FINE.Views;
 using ReactiveUI;
 using Splat;
 
