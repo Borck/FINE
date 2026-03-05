@@ -1,9 +1,9 @@
-# NodeNetwork API documentation
+# FINE API documentation
 
-## NodeNetwork
+## FINE
 You can find the API documentation [here](api/index.md).
 
 ## Links
- - [Homepage](https://wouterdek.github.io/NodeNetwork/)
- - [Documentation homepage](https://wouterdek.github.io/NodeNetwork/doc)
- - [Github page](https://github.com/Wouterdek/NodeNetwork)
+ - [Homepage](https://borck.github.io/FINE/)
+ - [Documentation homepage](https://borck.github.io/FINE/doc)
+ - [Github page](https://github.com/borck/FINE)
