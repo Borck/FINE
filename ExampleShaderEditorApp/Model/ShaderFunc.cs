@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+namespace ExampleShaderEditorApp.Model;
 
-namespace ExampleShaderEditorApp.Model
-{
-    public class ShaderFunc
-    {
-        public Func<string> CompilationFunc { get; set; }
+using System;
 
-        public ShaderFunc(Func<string> compilationFunc)
-        {
-            this.CompilationFunc = compilationFunc;
-        }
+public class ShaderFunc {
+  public Func<string> CompilationFunc { get; set; }
 
-        public string Compile() => CompilationFunc();
-    }
+  public ShaderFunc(Func<string> compilationFunc) {
+    CompilationFunc = compilationFunc;
+  }
+
+  public string Compile() => CompilationFunc();
 }

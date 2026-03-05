@@ -1,56 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+namespace ExampleCodeGenApp.ViewModels;
+
+using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ExampleCodeGenApp.Model.Compiler;
 using MoonSharp.Interpreter;
 using ReactiveUI;
 
-namespace ExampleCodeGenApp.ViewModels
-{
-    public class CodeSimViewModel : ReactiveObject
-    {
-        #region Code
-        public IStatement Code
-        {
-            get => _code;
-            set => this.RaiseAndSetIfChanged(ref _code, value);
-        }
-        private IStatement _code;
-        #endregion
-        
-        #region Output
-        public string Output
-        {
-            get => _output;
-            set => this.RaiseAndSetIfChanged(ref _output, value);
-        }
-        private string _output;
-        #endregion
+public class CodeSimViewModel : ReactiveObject {
+  #region Code
+  public IStatement Code {
+    get => _code;
+    set => this.RaiseAndSetIfChanged(ref _code, value);
+  }
+  private IStatement _code;
+  #endregion
 
-        public ReactiveCommand<Unit, Unit> RunScript { get; }
-        public ReactiveCommand<Unit, Unit> ClearOutput { get; }
+  #region Output
+  public string Output {
+    get => _output;
+    set => this.RaiseAndSetIfChanged(ref _output, value);
+  }
+  private string _output;
+  #endregion
 
-        public CodeSimViewModel()
-        {
-            RunScript = ReactiveCommand.Create(() =>
-                {
-                    Script script = new Script();
-                    script.Globals["print"] = (Action<string>)Print;
-                    string source =  Code.Compile(new CompilerContext());
-                    script.DoString(source);
-                },
-                this.WhenAnyValue(vm => vm.Code).Select(code => code != null));
+  public ReactiveCommand<Unit, Unit> RunScript { get; }
+  public ReactiveCommand<Unit, Unit> ClearOutput { get; }
 
-            ClearOutput = ReactiveCommand.Create(() => { Output = ""; });
-        }
+  public CodeSimViewModel() {
+    RunScript = ReactiveCommand.Create(() => {
+      var script = new Script();
+      script.Globals["print"] = (Action<string>)Print;
+      var source = Code.Compile(new CompilerContext());
+      script.DoString(source);
+    },
+        this.WhenAnyValue(vm => vm.Code).Select(code => code != null));
 
-        public void Print(string msg)
-        {
-            Output += msg + "\n";
-        }
-    }
+    ClearOutput = ReactiveCommand.Create(() => { Output = ""; });
+  }
+
+  public void Print(string msg) => Output += msg + "\n";
 }

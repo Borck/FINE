@@ -4,7 +4,7 @@
 
 This document tracks the execution of the NodeNetwork solution upgrade so that all relevant projects use only the following multi-target frameworks: `net6.0;net8.0;net10.0`.
 
-**Progress**: 3/4 tasks complete (75%) ![0%](https://progress-bar.xyz/75)
+**Progress**: 4/4 tasks complete (100%) ![0%](https://progress-bar.xyz/100)
 
 ---
 
@@ -50,10 +50,10 @@ This document tracks the execution of the NodeNetwork solution upgrade so that a
 
 ---
 
-### [▶] TASK-004: Final commit
+### [✓] TASK-004: Final commit *(Completed: 2026-02-27 14:02)*
 **References**: Plan §Source Control Strategy
 
-- [▶] (1) Commit all changes with message: "Upgrade solution to .NET multi-targeting
+- [✓] (1) Commit all changes with message: "Upgrade solution to .NET multi-targeting
 
 - Update all 8 WPF projects to multi-target net6.0;net8.0;net10.0
 - Downgrade ReactiveUI.WPF from 20.4.1 to 16.4.15 for compatibility
@@ -65,6 +65,7 @@ This document tracks the execution of the NodeNetwork solution upgrade so that a
 - Validate multi-target builds (net6.0, net8.0, net10.0)"
 
 ---
+
 
 
 

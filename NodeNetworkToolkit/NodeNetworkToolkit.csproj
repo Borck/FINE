@@ -1,6 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net8.0-windows;net10.0-windows</TargetFrameworks>
     <OutputType>Library</OutputType>
     <RootNamespace>NodeNetwork.Toolkit</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -25,21 +24,14 @@
     <ProjectReference Include="..\NodeNetwork\NodeNetwork.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ReactiveUI" Version="16.4.15" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="ReactiveUI" Version="23.1.8" />
     <PackageReference Include="System.Collections.Immutable" Version="10.0.3" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Group\AddEndpointDropPanel\AddEndpointDropPanelView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Group\AddEndpointDropPanel\AddEndpointDropPanelView.xaml">
       <SubType>Designer</SubType>
     </Page>

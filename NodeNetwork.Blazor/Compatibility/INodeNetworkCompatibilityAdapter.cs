@@ -1,10 +1,9 @@
-using NodeNetwork.Blazor.Models;
-
 namespace NodeNetwork.Blazor.Compatibility;
 
-public interface INodeNetworkCompatibilityAdapter
-{
-    NodeNetworkDocument Export(NetworkModel network);
+using NodeNetwork.Blazor.Models;
 
-    NetworkModel Import(NodeNetworkDocument document);
+public interface INodeNetworkCompatibilityAdapter {
+  NodeNetworkDocument Export(NetworkModel network);
+
+  NetworkModel Import(NodeNetworkDocument document);
 }

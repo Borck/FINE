@@ -1,95 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
+namespace NodeNetwork.Views;
+
+using System;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using NodeNetwork.Utilities;
 using NodeNetwork.ViewModels;
 using ReactiveUI;
-using Splat;
-using NodeNetwork.Utilities;
 
-namespace NodeNetwork.Views
-{
-    [TemplatePart(Name = nameof(EndpointHost), Type = typeof(ViewModelViewHost))]
-    [TemplatePart(Name = nameof(EditorHost), Type = typeof(ViewModelViewHost))]
-    [TemplatePart(Name = nameof(NameLabel), Type = typeof(TextBlock))]
-    [TemplatePart(Name = nameof(Icon), Type = typeof(Image))]
-    public class NodeOutputView : Control, IViewFor<NodeOutputViewModel>
-    {
-        #region ViewModel
-        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel),
-            typeof(NodeOutputViewModel), typeof(NodeOutputView), new PropertyMetadata(null));
+[TemplatePart(Name = nameof(EndpointHost), Type = typeof(ViewModelViewHost))]
+[TemplatePart(Name = nameof(EditorHost), Type = typeof(ViewModelViewHost))]
+[TemplatePart(Name = nameof(NameLabel), Type = typeof(TextBlock))]
+[TemplatePart(Name = nameof(Icon), Type = typeof(Image))]
+public class NodeOutputView : Control, IViewFor<NodeOutputViewModel> {
+  #region ViewModel
+  public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register(nameof(ViewModel),
+      typeof(NodeOutputViewModel), typeof(NodeOutputView), new PropertyMetadata(null));
 
-        public NodeOutputViewModel ViewModel
-        {
-            get => (NodeOutputViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
+  public NodeOutputViewModel ViewModel {
+    get => (NodeOutputViewModel)GetValue(ViewModelProperty);
+    set => SetValue(ViewModelProperty, value);
+  }
 
-        object IViewFor.ViewModel
-        {
-            get => ViewModel;
-            set => ViewModel = (NodeOutputViewModel)value;
-        }
-        #endregion
-        
-        private ViewModelViewHost EndpointHost { get; set; }
-        private ViewModelViewHost EditorHost { get; set; }
-        private TextBlock NameLabel { get; set; }
-        private Image Icon { get; set; }
+  object IViewFor.ViewModel {
+    get => ViewModel;
+    set => ViewModel = (NodeOutputViewModel)value;
+  }
+  #endregion
 
-        private bool _isHeaderEmpty;
+  private ViewModelViewHost EndpointHost { get; set; }
+  private ViewModelViewHost EditorHost { get; set; }
+  private TextBlock NameLabel { get; set; }
+  private Image Icon { get; set; }
 
-        public NodeOutputView()
-        {
-            DefaultStyleKey = typeof(NodeOutputView);
+  private bool _isHeaderEmpty;
 
-            SetupBindings();
-        }
+  public NodeOutputView() {
+    DefaultStyleKey = typeof(NodeOutputView);
 
-        private void SetupBindings()
-        {
-            this.WhenActivated(d =>
-            {
-                this.OneWayBind(ViewModel, vm => vm.Name, v => v.NameLabel.Text).DisposeWith(d);
-                this.OneWayBind(ViewModel, vm => vm.Port, v => v.EndpointHost.ViewModel).DisposeWith(d);
-                this.OneWayBind(ViewModel, vm => vm.Port.IsVisible, v => v.EndpointHost.Visibility).DisposeWith(d);
-                this.OneWayBind(ViewModel, vm => vm.Editor, v => v.EditorHost.ViewModel).DisposeWith(d);
-                this.WhenAnyValue(x => x.ViewModel.Icon)
-                    .SelectMany(icon => icon?.ToNativeAsync().ToObservable() ?? Observable.Return<ImageSource>(null))
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .BindTo(this, x => x.Icon.Source)
-                    .DisposeWith(d);
+    SetupBindings();
+  }
+
+  private void SetupBindings() => this.WhenActivated(d => {
+    this.OneWayBind(ViewModel, vm => vm.Name, v => v.NameLabel.Text).DisposeWith(d);
+    this.OneWayBind(ViewModel, vm => vm.Port, v => v.EndpointHost.ViewModel).DisposeWith(d);
+    this.OneWayBind(ViewModel, vm => vm.Port.IsVisible, v => v.EndpointHost.Visibility).DisposeWith(d);
+    this.OneWayBind(ViewModel, vm => vm.Editor, v => v.EditorHost.ViewModel).DisposeWith(d);
+    this.WhenAnyValue(x => x.ViewModel.Icon)
+        .SelectMany(icon => icon?.ToNativeAsync().ToObservable() ?? Observable.Return<ImageSource>(null))
+        .ObserveOn(RxApp.MainThreadScheduler)
+        .BindTo(this, x => x.Icon.Source)
+        .DisposeWith(d);
 
 
-                this.WhenAnyValue(v => v.ViewModel.Name, v => v.ViewModel.Icon,
-                        (name, icon) => string.IsNullOrEmpty(name) && icon == null)
-                    .Subscribe(v =>
-                    {
-                        _isHeaderEmpty = v;
-                        if (EditorHost != null)
-                        {
-                            Grid.SetRow(EditorHost, _isHeaderEmpty ? 0 : 1);
-                        }
-                    })
-                    .DisposeWith(d);
-            });
-        }
-
-        public override void OnApplyTemplate()
-        {
-            EndpointHost = GetTemplateChild(nameof(EndpointHost)) as ViewModelViewHost;
-            EditorHost = GetTemplateChild(nameof(EditorHost)) as ViewModelViewHost;
-            NameLabel = GetTemplateChild(nameof(NameLabel)) as TextBlock;
-            Icon = GetTemplateChild(nameof(Icon)) as Image;
-
+    this.WhenAnyValue(v => v.ViewModel.Name, v => v.ViewModel.Icon,
+            (name, icon) => string.IsNullOrEmpty(name) && icon == null)
+        .Subscribe(v => {
+          _isHeaderEmpty = v;
+          if (EditorHost != null) {
             Grid.SetRow(EditorHost, _isHeaderEmpty ? 0 : 1);
-        }
-    }
+          }
+        })
+        .DisposeWith(d);
+  });
+
+  public override void OnApplyTemplate() {
+    EndpointHost = GetTemplateChild(nameof(EndpointHost)) as ViewModelViewHost;
+    EditorHost = GetTemplateChild(nameof(EditorHost)) as ViewModelViewHost;
+    NameLabel = GetTemplateChild(nameof(NameLabel)) as TextBlock;
+    Icon = GetTemplateChild(nameof(Icon)) as Image;
+
+    Grid.SetRow(EditorHost, _isHeaderEmpty ? 0 : 1);
+  }
 }

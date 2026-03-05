@@ -12,24 +12,24 @@ namespace NodeNetwork.Toolkit.Blazor.ContextMenu {
     /// </summary>
     public required NetworkModel Network { get; init; }
 
-  /// <summary>
-  /// Label format used for generated add-node entries.
-  /// </summary>
+    /// <summary>
+    /// Label format used for generated add-node entries.
+    /// </summary>
     public string LabelFormat { get; init; } = "{0}";
 
-  /// <summary>
-  /// Function used to determine initial node placement.
-  /// </summary>
+    /// <summary>
+    /// Function used to determine initial node placement.
+    /// </summary>
     public Func<NodeModel, CanvasPoint> NodePositionFunc { get; set; } = static _ => default;
 
-  /// <summary>
-  /// Callback invoked after a node was added.
-  /// </summary>
+    /// <summary>
+    /// Callback invoked after a node was added.
+    /// </summary>
     public Action<NodeModel> OnNodeAdded { get; set; } = static _ => { };
 
-  /// <summary>
-  /// Adds a new node template command.
-  /// </summary>
+    /// <summary>
+    /// Adds a new node template command.
+    /// </summary>
     public void AddNodeType(NodeTemplate template) {
       ArgumentNullException.ThrowIfNull(template);
 
@@ -47,9 +47,9 @@ namespace NodeNetwork.Toolkit.Blazor.ContextMenu {
       });
     }
 
-  /// <summary>
-  /// Adds a set of node templates.
-  /// </summary>
+    /// <summary>
+    /// Adds a set of node templates.
+    /// </summary>
     public void AddNodeTypes(IEnumerable<NodeTemplate> templates) {
       ArgumentNullException.ThrowIfNull(templates);
       foreach (var template in templates) {
@@ -57,9 +57,9 @@ namespace NodeNetwork.Toolkit.Blazor.ContextMenu {
       }
     }
 
-  /// <summary>
-  /// Returns templates that contain at least one endpoint connectable to the pending connection.
-  /// </summary>
+    /// <summary>
+    /// Returns templates that contain at least one endpoint connectable to the pending connection.
+    /// </summary>
     public static IEnumerable<NodeTemplate> GetConnectableNodes(
       IEnumerable<NodeTemplate> candidates,
       NetworkModel network,
@@ -81,9 +81,9 @@ namespace NodeNetwork.Toolkit.Blazor.ContextMenu {
       }
     }
 
-  /// <summary>
-  /// Returns output ports that can connect to a locked pending input.
-  /// </summary>
+    /// <summary>
+    /// Returns output ports that can connect to a locked pending input.
+    /// </summary>
     public static IEnumerable<NodePortModel> GetConnectableOutputs(
       NodeModel node,
       NetworkModel network,
@@ -106,9 +106,9 @@ namespace NodeNetwork.Toolkit.Blazor.ContextMenu {
       }
     }
 
-  /// <summary>
-  /// Returns input ports that can connect to a locked pending output.
-  /// </summary>
+    /// <summary>
+    /// Returns input ports that can connect to a locked pending output.
+    /// </summary>
     public static IEnumerable<NodePortModel> GetConnectableInputs(
       NodeModel node,
       NetworkModel network,

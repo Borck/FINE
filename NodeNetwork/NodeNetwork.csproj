@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0-windows;net8.0-windows;net10.0-windows</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows10.0.19041.0</TargetFrameworks>
     <OutputType>library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
@@ -18,20 +18,13 @@
     <DocumentationFile>bin\Release\NodeNetwork.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="System.Windows" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="log4net" Version="3.1.0" />
-    <PackageReference Include="ReactiveUI" Version="16.4.15" />
-    <PackageReference Include="ReactiveUI.WPF" Version="16.4.15" />
-    <PackageReference Include="Splat.Drawing" Version="13.1.63" />
-    <PackageReference Include="System.Collections.Immutable" Version="10.0.3" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="log4net" Version="3.3.0" />
+    <PackageReference Include="ReactiveUI" Version="23.1.8" />
+    <PackageReference Include="ReactiveUI.WPF" Version="23.1.8" />
+    <PackageReference Include="Splat" Version="19.3.1" />
+    <PackageReference Include="Splat.Builder" Version="19.3.1" />
+    <PackageReference Include="Splat.Core" Version="19.3.1" />
+    <PackageReference Include="Splat.Logging" Version="19.3.1" />
+    <PackageReference Include="Splat.Drawing" Version="19.3.1" />
   </ItemGroup>
 </Project>

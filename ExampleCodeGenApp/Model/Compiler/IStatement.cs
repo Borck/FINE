@@ -1,7 +1,5 @@
-﻿namespace ExampleCodeGenApp.Model.Compiler
-{
-    public interface IStatement
-    {
-        string Compile(CompilerContext context);
-    }
+namespace ExampleCodeGenApp.Model.Compiler;
+
+public interface IStatement {
+  string Compile(CompilerContext context);
 }
