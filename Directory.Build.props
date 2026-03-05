@@ -12,5 +12,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>FINE</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <PackageIcon>logo128.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\assets\logo128.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>
