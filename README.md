@@ -1,4 +1,4 @@
-# ![](https://raw.githubusercontent.com/Borck/FINE/gh-pages/img/logo128.png) FINE [![https://www.nuget.org/packages/FINE/](https://img.shields.io/nuget/v/FINE.svg?style=flat)](https://www.nuget.org/packages/FINE/)
+# ![](https://raw.githubusercontent.com/Borck/FINE/gh-pages/img/logo128.png) FINE [![https://www.nuget.org/packages/FINE.WPF/](https://img.shields.io/nuget/v/FINE.WPF.svg?style=flat)](https://www.nuget.org/packages/FINE.WPF/)
  Flow Interactive Node Editor
 
 #### FINE is a .NET C# WPF library that provides a node editor component.
