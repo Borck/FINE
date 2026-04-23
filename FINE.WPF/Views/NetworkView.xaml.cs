@@ -288,7 +288,7 @@ public partial class NetworkView : IViewFor<NetworkViewModel> {
                 )
                 .Select(pattern => pattern.EventArgs)
                 .Subscribe(e => {
-                    if (StartCutGesture.Matches(this, e)) {
+                    if (ViewModel?.CutLine != null && StartCutGesture.Matches(this, e)) {
                       var pos = e.GetPosition(contentContainer);
                       ViewModel.CutLine.StartPoint = pos;
                       ViewModel.CutLine.EndPoint = pos;
@@ -306,6 +306,10 @@ public partial class NetworkView : IViewFor<NetworkViewModel> {
                 )
                 .Select(pattern => pattern.EventArgs)
                 .Subscribe(e => {
+                    if (ViewModel?.CutLine == null) {
+                      return;
+                    }
+
                     if (!ViewModel.CutLine.IsVisible && cutGestured) {
                       ViewModel.StartCut();
                     }
