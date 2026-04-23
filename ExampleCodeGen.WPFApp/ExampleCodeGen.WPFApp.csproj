@@ -20,6 +20,6 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
     <PackageReference Include="MoonSharp" Version="2.0.0.0" />
-    <PackageReference Include="ReactiveUI" Version="23.1.8" />
+    <PackageReference Include="ReactiveUI" Version="23.2.1" />
   </ItemGroup>
 </Project>

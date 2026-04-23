@@ -33,6 +33,6 @@
     <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
     <PackageReference Include="OpenTK" Version="4.9.4" />
     <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
-    <PackageReference Include="ReactiveUI" Version="23.1.8" />
+    <PackageReference Include="ReactiveUI" Version="23.2.1" />
   </ItemGroup>
 </Project>
