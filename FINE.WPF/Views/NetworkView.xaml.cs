@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
@@ -261,6 +262,7 @@ public partial class NetworkView : IViewFor<NetworkViewModel> {
                 )
                 .Select(pattern => pattern.EventArgs)
                 .Where(k => k.Key == Key.Delete)
+                .Select(_ => Unit.Default)
                 .InvokeCommand(this, v => v.ViewModel.DeleteSelectedNodes)
                 .DisposeWith(d);
     }
