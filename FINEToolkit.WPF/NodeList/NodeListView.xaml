@@ -92,6 +92,11 @@
                           VirtualizingPanel.ScrollUnit="Pixel">
                 <ItemsControl.GroupStyle>
                     <GroupStyle>
+                        <GroupStyle.Panel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel IsItemsHost="True" Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </GroupStyle.Panel>
                         <GroupStyle.ContainerStyle>
                             <Style TargetType="{x:Type GroupItem}">
                                 <Setter Property="Template">

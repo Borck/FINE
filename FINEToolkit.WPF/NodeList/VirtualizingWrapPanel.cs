@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 
 /// <summary>
@@ -95,6 +96,24 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
   }
   #endregion
 
+  // ItemsControl.GetItemsOwner(this).Items.Count is only correct for a top-level (ungrouped) panel.
+  // When this panel is the ItemsHost inside a GroupItem's ItemsPresenter (grouping active), GetItemsOwner
+  // still resolves to the top-level ItemsControl, whose Items is the full flat collection across every
+  // group - not just this group's items. Use the GroupItem's own CollectionViewGroup.ItemCount instead
+  // when we're scoped to a group, since that's what this panel instance actually needs to lay out.
+  private int GetItemCount() {
+    // This panel's TemplatedParent is the ItemsPresenter that hosts it; that ItemsPresenter's own
+    // TemplatedParent is whatever control's ControlTemplate declared it - a GroupItem when this
+    // panel is scoped to one group (grouping active), or the top-level ItemsControl otherwise.
+    if (TemplatedParent is FrameworkElement itemsPresenter &&
+        itemsPresenter.TemplatedParent is GroupItem { Content: CollectionViewGroup group }) {
+      return group.ItemCount;
+    }
+
+    var itemsControl = ItemsControl.GetItemsOwner(this);
+    return itemsControl?.HasItems == true ? itemsControl.Items.Count : 0;
+  }
+
   private int GetIndexFromContainer(DependencyObject container) {
     while (container != null && !InternalChildren.Contains(container as UIElement)) {
       container = VisualTreeHelper.GetParent(container);
@@ -108,8 +127,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
     // ItemContainerGenerator; until it's touched once, ItemContainerGenerator returns null.
     _ = InternalChildren;
 
-    var itemsControl = ItemsControl.GetItemsOwner(this);
-    var itemCount = itemsControl?.HasItems == true ? itemsControl.Items.Count : 0;
+    var itemCount = GetItemCount();
 
     CanVerticallyScroll = true;
     CanHorizontallyScroll = false;
@@ -123,7 +141,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
       return new Size(availableSize.Width, 0);
     }
 
-    EnsureItemSize(availableSize);
+    RefreshItemSize();
     var itemWidth = _itemSize?.Width ?? availableSize.Width;
     var itemHeight = _itemSize?.Height ?? 0;
 
@@ -153,25 +171,37 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
     return new Size(availableSize.Width, Math.Min(availableSize.Height, extentHeight));
   }
 
-  private void EnsureItemSize(Size availableSize) {
-    if (_itemSize != null) {
-      return;
+  // Re-derives the uniform tile size from a reference container on every measure pass rather than
+  // caching it once. The ItemTemplate that gives tiles their real content/size is assigned via a
+  // ReactiveUI binding on Activation (NodeListView.xaml.cs), which can land after this panel's
+  // first MeasureOverride - if we locked in whatever (possibly zero) size we saw first, tiles would
+  // never recover once the real template arrived. Re-measuring is effectively free once the
+  // container's measure is valid and the constraint is unchanged (WPF short-circuits to the cached
+  // DesiredSize), so this only does real work when something actually invalidated the container.
+  private void RefreshItemSize() {
+    UIElement referenceContainer = InternalChildren.Count > 0 ? InternalChildren[0] : null;
+
+    if (referenceContainer == null) {
+      var generatorStartPosition = ItemContainerGenerator.GeneratorPositionFromIndex(0);
+      using (ItemContainerGenerator.StartAt(generatorStartPosition, GeneratorDirection.Forward, true)) {
+        var container = (UIElement)ItemContainerGenerator.GenerateNext(out var isNewlyRealized);
+        if (container == null) {
+          return;
+        }
+
+        if (isNewlyRealized) {
+          AddInternalChild(container);
+          ItemContainerGenerator.PrepareItemContainer(container);
+        }
+
+        referenceContainer = container;
+      }
     }
 
-    var generatorStartPosition = ItemContainerGenerator.GeneratorPositionFromIndex(0);
-    using (ItemContainerGenerator.StartAt(generatorStartPosition, GeneratorDirection.Forward, true)) {
-      var container = (UIElement)ItemContainerGenerator.GenerateNext(out var isNewlyRealized);
-      if (container == null) {
-        return;
-      }
-
-      if (isNewlyRealized) {
-        AddInternalChild(container);
-        ItemContainerGenerator.PrepareItemContainer(container);
-      }
-
-      container.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-      _itemSize = container.DesiredSize;
+    referenceContainer.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+    var measured = referenceContainer.DesiredSize;
+    if (measured.Width > 0 && measured.Height > 0) {
+      _itemSize = measured;
     }
   }
 
