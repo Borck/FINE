@@ -31,6 +31,10 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
   // expose IndexFromContainer - that's only on the concrete ItemContainerGenerator class.
   private ItemContainerGenerator Generator => (ItemContainerGenerator)ItemContainerGenerator;
 
+  // Recycle() is only exposed via IRecyclingItemContainerGenerator, which ItemContainerGenerator
+  // implements explicitly (not as a regular public member).
+  private IRecyclingItemContainerGenerator RecyclingGenerator => (IRecyclingItemContainerGenerator)ItemContainerGenerator;
+
   #region IScrollInfo
   public bool CanVerticallyScroll { get; set; }
   public bool CanHorizontallyScroll { get; set; }
@@ -172,12 +176,17 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
   }
 
   // Re-derives the uniform tile size from a reference container on every measure pass rather than
-  // caching it once. The ItemTemplate that gives tiles their real content/size is assigned via a
-  // ReactiveUI binding on Activation (NodeListView.xaml.cs), which can land after this panel's
-  // first MeasureOverride - if we locked in whatever (possibly zero) size we saw first, tiles would
-  // never recover once the real template arrived. Re-measuring is effectively free once the
-  // container's measure is valid and the constraint is unchanged (WPF short-circuits to the cached
-  // DesiredSize), so this only does real work when something actually invalidated the container.
+  // caching it once. A tile's real content only appears once its ViewModelViewHost activates (see
+  // the container-recycling note on CleanUpItems below) - if we locked in whatever (possibly
+  // degenerate) size we saw before that happened, tiles would never recover once content arrived.
+  // Re-measuring is effectively free once the container's measure is valid and the constraint is
+  // unchanged (WPF short-circuits to the cached DesiredSize), so this only does real work when
+  // something actually invalidated the container.
+  //
+  // Measured with PositiveInfinity, matching how NodeView is actually designed to be sized: in its
+  // real usage (a node placed in NetworkView's Canvas), Canvas always measures children with
+  // infinite available space and NodeView relies on that plus its own MinWidth/MinHeight - so this
+  // mirrors the constraint NodeView is meant to compute its natural size under.
   private void RefreshItemSize() {
     UIElement referenceContainer = InternalChildren.Count > 0 ? InternalChildren[0] : null;
 
@@ -240,12 +249,23 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
     return InternalChildren.Count;
   }
 
+  // Recycles rather than destroys containers that scroll out of view. Each tile's content is a
+  // ReactiveUI ViewModelViewHost, which only resolves and sets its View once its WhenActivated block
+  // fires - and that's gated on the container's WPF Loaded event. Loaded fires (at the earliest) on
+  // the next layout pass after a container is connected to the tree, never synchronously within the
+  // same Measure/Arrange call that created it. Generator.Remove() fully destroys the container, so
+  // any tile whose row/column changed (e.g. every resize, since that reshuffles which items are
+  // realized) got torn down and rebuilt from scratch - forcing it through Loaded/WhenActivated again
+  // before anything would render, and if it got torn down again before that finished, it never did.
+  // Recycle() keeps the container's .NET instance (and its already-activated ViewModelViewHost)
+  // alive in the generator's pool for reuse by a different item, sidestepping Loaded entirely for
+  // every reuse after the first.
   private void CleanUpItems(int firstVisibleIndex, int lastVisibleIndex) {
     for (var childIndex = InternalChildren.Count - 1; childIndex >= 0; childIndex--) {
       var generatorPosition = new GeneratorPosition(childIndex, 0);
       var itemIndex = ItemContainerGenerator.IndexFromGeneratorPosition(generatorPosition);
       if (itemIndex < firstVisibleIndex || itemIndex > lastVisibleIndex) {
-        ItemContainerGenerator.Remove(generatorPosition, 1);
+        RecyclingGenerator.Recycle(generatorPosition, 1);
         RemoveInternalChildRange(childIndex, 1);
       }
     }
