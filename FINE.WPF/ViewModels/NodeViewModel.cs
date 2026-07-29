@@ -197,16 +197,16 @@ public class NodeViewModel : ReactiveObject {
     Resizable = ResizeOrientation.Horizontal;
 
     // Setup parent relationship with inputs.
-    Inputs.Connect().ActOnEveryObject(
-      addedInput => addedInput.Parent = this,
-      removedInput => removedInput.Parent = null
-    );
+    Inputs.Connect()
+        .OnItemAdded(addedInput => addedInput.Parent = this)
+        .OnItemRemoved(removedInput => removedInput.Parent = null)
+        .Subscribe();
 
     // Setup parent relationship with outputs.
-    Outputs.Connect().ActOnEveryObject(
-        addedOutput => addedOutput.Parent = this,
-        removedOutput => removedOutput.Parent = null
-    );
+    Outputs.Connect()
+        .OnItemAdded(addedOutput => addedOutput.Parent = this)
+        .OnItemRemoved(removedOutput => removedOutput.Parent = null)
+        .Subscribe();
 
     // When an input is removed, delete any connection to/from that input
     Inputs.Preview().OnItemRemoved(removedInput => {

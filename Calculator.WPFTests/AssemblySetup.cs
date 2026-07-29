@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ReactiveUI;
-using ReactiveUI.Builder;
+using ReactiveUI.Reactive.Builder;
 
 namespace CalculatorTests;
 

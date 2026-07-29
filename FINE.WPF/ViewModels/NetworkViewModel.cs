@@ -217,10 +217,10 @@ public class NetworkViewModel : ReactiveObject {
 
   public NetworkViewModel() {
     // Setup parent relationship in nodes.
-    Nodes.Connect().ActOnEveryObject(
-        addedNode => addedNode.Parent = this,
-        removedNode => removedNode.Parent = null
-    );
+    Nodes.Connect()
+        .OnItemAdded(addedNode => addedNode.Parent = this)
+        .OnItemRemoved(removedNode => removedNode.Parent = null)
+        .Subscribe();
 
     // SelectedNodes is a derived collection of all nodes with IsSelected = true.
     SelectedNodes = Nodes.Connect()

@@ -1,5 +1,6 @@
 namespace FINE.ViewModels;
 
+using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
@@ -64,6 +65,9 @@ public class SelectionRectangleViewModel : ReactiveObject {
         .Select(_ => new Rect(StartPoint, EndPoint))
         .ToProperty(this, vm => vm.Rectangle, out _rectangle);
 
-    IntersectingNodes.Connect().ActOnEveryObject(node => node.IsSelected = true, node => node.IsSelected = false);
+    IntersectingNodes.Connect()
+        .OnItemAdded(node => node.IsSelected = true)
+        .OnItemRemoved(node => node.IsSelected = false)
+        .Subscribe();
   }
 }
