@@ -3,7 +3,7 @@ namespace StressTest;
 using System.Windows;
 using FINE;
 using ReactiveUI;
-using ReactiveUI.Builder;
+using ReactiveUI.Reactive.Builder;
 
 /// <summary>
 /// Interaction logic for App.xaml

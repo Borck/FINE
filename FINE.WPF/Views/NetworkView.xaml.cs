@@ -18,6 +18,7 @@ using FINE.Utilities;
 using FINE.ViewModels;
 using FINE.Views.Controls;
 using ReactiveUI;
+using ReactiveUI.Primitives.Disposables;
 
 
 
@@ -249,7 +250,7 @@ public partial class NetworkView : IViewFor<NetworkViewModel> {
 
 
 
-  private void SetupKeyboardShortcuts() => this.WhenActivated((CompositeDisposable d) => {
+  private void SetupKeyboardShortcuts() => this.WhenActivated((MultipleDisposable d) => {
       Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
                   h => MouseLeftButtonDown += h,
                   h => MouseLeftButtonDown -= h
@@ -353,7 +354,7 @@ public partial class NetworkView : IViewFor<NetworkViewModel> {
 
 
   private void SetupViewportBinding() {
-    this.WhenActivated(d => {
+    this.WhenActivated((MultipleDisposable d) => {
         this.Bind(ViewModel, vm => vm.ZoomFactor, v => v.dragCanvas.ZoomFactor);
         this.Bind(ViewModel, vm => vm.MaxZoomLevel, v => v.dragCanvas.MaxZoomFactor);
         this.Bind(ViewModel, vm => vm.MinZoomLevel, v => v.dragCanvas.MinZoomFactor);
