@@ -1,6 +1,7 @@
 namespace ExampleShaderEditorApp.ViewModels.Nodes;
 
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using DynamicData;
 using ExampleShaderEditorApp.Model;
 using FINE.Views;
@@ -12,19 +13,21 @@ public class GeometryNodeViewModel : ShaderNodeViewModel {
     Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<GeometryNodeViewModel>));
   }
 
+  private static readonly Task<IBitmap> VertexPositionIconTask = BitmapLoader.Current.LoadFromResource(
+      "pack://application:,,,/Resources/Icons/pos.png", 20, 20);
+  private static readonly Task<IBitmap> NormalIconTask = BitmapLoader.Current.LoadFromResource(
+      "pack://application:,,,/Resources/Icons/norm.png", 20, 20);
+  private static readonly Task<IBitmap> CameraIconTask = BitmapLoader.Current.LoadFromResource(
+      "pack://application:,,,/Resources/Icons/eye.png", 20, 20);
+
   public ShaderNodeOutputViewModel VertexPositionOutput { get; } = new ShaderNodeOutputViewModel();
   public ShaderNodeOutputViewModel NormalOutput { get; } = new ShaderNodeOutputViewModel();
   public ShaderNodeOutputViewModel CameraOutput { get; } = new ShaderNodeOutputViewModel();
 
   private async void LoadIcons() {
-    // This reloads the icons for each instance of the viewmodel
-    // A more efficient implementation would load these once into a static field, then reuse it in each vm instance.
-    VertexPositionOutput.Icon = await BitmapLoader.Current.LoadFromResource(
-        "pack://application:,,,/Resources/Icons/pos.png", 20, 20);
-    NormalOutput.Icon = await BitmapLoader.Current.LoadFromResource(
-        "pack://application:,,,/Resources/Icons/norm.png", 20, 20);
-    CameraOutput.Icon = await BitmapLoader.Current.LoadFromResource(
-        "pack://application:,,,/Resources/Icons/eye.png", 20, 20);
+    VertexPositionOutput.Icon = await VertexPositionIconTask;
+    NormalOutput.Icon = await NormalIconTask;
+    CameraOutput.Icon = await CameraIconTask;
   }
 
   public GeometryNodeViewModel() {

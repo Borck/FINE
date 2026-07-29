@@ -1,5 +1,6 @@
 namespace ExampleShaderEditorApp.ViewModels.Nodes;
 
+using System.Threading.Tasks;
 using DynamicData;
 using ExampleShaderEditorApp.Model;
 using ExampleShaderEditorApp.ViewModels.Editors;
@@ -12,14 +13,12 @@ public class ColorNodeViewModel : ShaderNodeViewModel {
     Locator.CurrentMutable.Register(() => new NodeView(), typeof(IViewFor<ColorNodeViewModel>));
   }
 
+  private static readonly Task<IBitmap> IconTask = BitmapLoader.Current.LoadFromResource(
+      "pack://application:,,,/Resources/Icons/colorwheel.png", 20, 20);
+
   public ShaderNodeOutputViewModel ColorOutput { get; } = new ShaderNodeOutputViewModel();
 
-
-  private async void LoadIcon() =>
-    // This reloads the icon for each instance of the viewmodel
-    // A more efficient implementation would load this once into a static field, then reuse it in each vm instance.
-    HeaderIcon = await BitmapLoader.Current.LoadFromResource(
-        "pack://application:,,,/Resources/Icons/colorwheel.png", 20, 20);
+  private async void LoadIcon() => HeaderIcon = await IconTask;
 
   public ColorNodeViewModel() {
     Name = "Color";
