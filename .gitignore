@@ -302,5 +302,5 @@ __pycache__/
 log.txt
 _site/
 
-!/ExampleShaderEditorApp/Resources/Models/*.obj
+!/ExampleShaderEditor.WPFApp/Resources/Models/*.obj
 NuGet/nuget.exe
