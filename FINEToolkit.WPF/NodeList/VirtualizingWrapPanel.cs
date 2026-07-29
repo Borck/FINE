@@ -104,6 +104,10 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
   }
 
   protected override Size MeasureOverride(Size availableSize) {
+    // Accessing InternalChildren is what makes WPF associate this panel with its
+    // ItemContainerGenerator; until it's touched once, ItemContainerGenerator returns null.
+    _ = InternalChildren;
+
     var itemsControl = ItemsControl.GetItemsOwner(this);
     var itemCount = itemsControl?.HasItems == true ? itemsControl.Items.Count : 0;
 
