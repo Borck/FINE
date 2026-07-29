@@ -26,6 +26,10 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
     ClipToBounds = true;
   }
 
+  // Panel.ItemContainerGenerator is typed as the IItemContainerGenerator interface, which doesn't
+  // expose IndexFromContainer - that's only on the concrete ItemContainerGenerator class.
+  private ItemContainerGenerator Generator => (ItemContainerGenerator)ItemContainerGenerator;
+
   #region IScrollInfo
   public bool CanVerticallyScroll { get; set; }
   public bool CanHorizontallyScroll { get; set; }
@@ -96,7 +100,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
       container = VisualTreeHelper.GetParent(container);
     }
 
-    return container == null ? -1 : ItemContainerGenerator.IndexFromContainer(container);
+    return container == null ? -1 : Generator.IndexFromContainer(container);
   }
 
   protected override Size MeasureOverride(Size availableSize) {
@@ -193,7 +197,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
 
   private int GetInternalChildInsertIndex(int itemIndex) {
     for (var childIndex = 0; childIndex < InternalChildren.Count; childIndex++) {
-      var existingItemIndex = ItemContainerGenerator.IndexFromContainer(InternalChildren[childIndex]);
+      var existingItemIndex = Generator.IndexFromContainer(InternalChildren[childIndex]);
       if (existingItemIndex > itemIndex) {
         return childIndex;
       }
@@ -222,7 +226,7 @@ public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo {
     var itemHeight = _itemSize.Value.Height;
 
     foreach (UIElement child in InternalChildren) {
-      var itemIndex = ItemContainerGenerator.IndexFromContainer(child);
+      var itemIndex = Generator.IndexFromContainer(child);
       if (itemIndex < 0) {
         continue;
       }
