@@ -1,7 +1,7 @@
 namespace ExampleShaderEditorApp.Views;
 
 using System;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
@@ -64,7 +64,7 @@ public partial class MainWindow : Window, IViewFor<MainViewModel> {
         var pendingConMenuVm = ctx.Input;
         pendingConnectionContextMenuView.ViewModel = pendingConMenuVm;
         pendingConnectionContextMenuView.IsOpen = true;
-        ctx.SetOutput(Unit.Default);
+        ctx.SetOutput(RxVoid.Default);
       }).DisposeWith(d);
     });
 

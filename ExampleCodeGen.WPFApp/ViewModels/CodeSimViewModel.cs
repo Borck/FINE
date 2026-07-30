@@ -2,7 +2,7 @@ namespace ExampleCodeGenApp.ViewModels;
 
 using System;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using ExampleCodeGenApp.Model.Compiler;
 using MoonSharp.Interpreter;
@@ -25,8 +25,8 @@ public class CodeSimViewModel : ReactiveObject {
   private string _output;
   #endregion
 
-  public ReactiveCommand<Unit, Unit> RunScript { get; }
-  public ReactiveCommand<Unit, Unit> ClearOutput { get; }
+  public ReactiveCommand<RxVoid, RxVoid> RunScript { get; }
+  public ReactiveCommand<RxVoid, RxVoid> ClearOutput { get; }
 
   public CodeSimViewModel() {
     RunScript = ReactiveCommand.Create(() => {

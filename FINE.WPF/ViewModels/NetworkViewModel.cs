@@ -2,7 +2,7 @@ namespace FINE.ViewModels;
 
 using System;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using System.Windows;
 using DynamicData;
@@ -194,25 +194,25 @@ public class NetworkViewModel : ReactiveObject {
   /// Observing the Connections list directly will trigger the same notifications,
   /// but before the endpoints have had a chance to update and so they may be in an invalid state.
   /// </remarks>
-  public IObservable<Unit> ConnectionsUpdated { get; }
+  public IObservable<RxVoid> ConnectionsUpdated { get; }
 
   /// <summary>
   /// This observable pushes a notification whenever any functional changes are made to the network.
   /// Purely esthetical changes, such as the collapsing of nodes, do not trigger this observable.
   /// </summary>
-  public IObservable<Unit> NetworkChanged { get; }
+  public IObservable<RxVoid> NetworkChanged { get; }
   #endregion
 
   #region Commands
   /// <summary>
   /// Deletes the nodes in SelectedNodes that are user-removable.
   /// </summary>
-  public ReactiveCommand<Unit, Unit> DeleteSelectedNodes { get; }
+  public ReactiveCommand<RxVoid, RxVoid> DeleteSelectedNodes { get; }
 
   /// <summary>
   /// Runs the Validator function and stores the result in LatestValidation.
   /// </summary>
-  public ReactiveCommand<Unit, NetworkValidationResult> UpdateValidation { get; }
+  public ReactiveCommand<RxVoid, NetworkValidationResult> UpdateValidation { get; }
   #endregion
 
   public NetworkViewModel() {
@@ -308,10 +308,10 @@ public class NetworkViewModel : ReactiveObject {
     ConnectionsUpdated = Observable.Zip(
         a,
         b,
-        (x, y) => Unit.Default
+        (x, y) => RxVoid.Default
     ).Publish().RefCount();
     ConnectionsUpdated.InvokeCommand(UpdateValidation);
-    Nodes.Connect().Select((IChangeSet<NodeViewModel> n) => Unit.Default).InvokeCommand(UpdateValidation);
+    Nodes.Connect().Select((IChangeSet<NodeViewModel> n) => RxVoid.Default).InvokeCommand(UpdateValidation);
 
     // Push a network change notification when a functional network change occurs.
     // These include:
@@ -320,27 +320,27 @@ public class NetworkViewModel : ReactiveObject {
     //  - Endpoint editors change
     //  - Network validation changes
     NetworkChanged = Observable.Merge(
-        Observable.Select(Nodes.Connect(), _ => Unit.Default),
-        Observable.Select(Nodes.Connect().MergeMany(node => node.Inputs.Connect()), _ => Unit.Default),
-        Observable.Select(Nodes.Connect().MergeMany(node => node.Outputs.Connect()), _ => Unit.Default),
+        Observable.Select(Nodes.Connect(), _ => RxVoid.Default),
+        Observable.Select(Nodes.Connect().MergeMany(node => node.Inputs.Connect()), _ => RxVoid.Default),
+        Observable.Select(Nodes.Connect().MergeMany(node => node.Outputs.Connect()), _ => RxVoid.Default),
         ConnectionsUpdated,
         OnEditorChanged(),
-        Validation.Select(_ => Unit.Default)
+        Validation.Select(_ => RxVoid.Default)
     ).Publish().RefCount();
   }
 
-  private IObservable<Unit> OnEditorChanged() => Observable.Merge(
+  private IObservable<RxVoid> OnEditorChanged() => Observable.Merge(
         Nodes.Connect().MergeMany(n =>
             n.Inputs.Connect().MergeMany(i =>
                 // Use WhenAnyObservable because Editor can change.
                 i.WhenAnyObservable(vm => vm.Editor.Changed)
             )
-        ).Select(_ => Unit.Default),
+        ).Select(_ => RxVoid.Default),
         Nodes.Connect().MergeMany(n =>
             n.Outputs.Connect().MergeMany(o =>
                 o.WhenAnyObservable(vm => vm.Editor.Changed)
             )
-        ).Select(_ => Unit.Default)
+        ).Select(_ => RxVoid.Default)
     );
 
   /// <summary>

@@ -1,6 +1,6 @@
 namespace FINE.Toolkit.Group.AddEndpointDropPanel;
 
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using DynamicData;
 using FINE.ViewModels;
@@ -15,7 +15,7 @@ public class AddEndpointDropPanelViewModel : ReactiveObject {
   /// Take the pending connection from the super- or subnetwork, whichever is non-null,
   /// and add endpoints to NodeGroupIOBinding that match this connection.
   /// </summary>
-  public ReactiveCommand<Unit, Unit> AddEndpointFromPendingConnection { get; }
+  public ReactiveCommand<RxVoid, RxVoid> AddEndpointFromPendingConnection { get; }
 
   #region IsDropZoneVisible
   public bool IsDropZoneVisible => _isDropZoneVisible.Value;

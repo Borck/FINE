@@ -1,7 +1,7 @@
 namespace FINE.ViewModels;
 
 using System;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Subjects;
 using System.Windows;
 using FINE.Views;
@@ -93,8 +93,8 @@ public class PortViewModel : ReactiveObject {
   /// <summary>
   /// Observable that fires when the user starts a new pending connection from this port.
   /// </summary>
-  public IObservable<Unit> ConnectionDragStarted => _connectionDragStarted;
-  private readonly Subject<Unit> _connectionDragStarted = new Subject<Unit>();
+  public IObservable<RxVoid> ConnectionDragStarted => _connectionDragStarted;
+  private readonly Subject<RxVoid> _connectionDragStarted = new Subject<RxVoid>();
   #endregion
 
   #region ConnectionPreview
@@ -109,15 +109,15 @@ public class PortViewModel : ReactiveObject {
   /// <summary>
   /// Fires when the user drops the pending connection on this port.
   /// </summary>
-  public IObservable<Unit> ConnectionDragFinished => _connectionDragFinished;
-  private readonly Subject<Unit> _connectionDragFinished = new Subject<Unit>();
+  public IObservable<RxVoid> ConnectionDragFinished => _connectionDragFinished;
+  private readonly Subject<RxVoid> _connectionDragFinished = new Subject<RxVoid>();
   #endregion
 
   public PortViewModel() {
     IsVisible = true;
   }
 
-  public void OnDragFromPort() => _connectionDragStarted.OnNext(Unit.Default);
+  public void OnDragFromPort() => _connectionDragStarted.OnNext(RxVoid.Default);
 
   public void OnPortEnter() {
     IsHighlighted = true;
@@ -139,7 +139,7 @@ public class PortViewModel : ReactiveObject {
 
   public void OnDropOnPort() {
     if (Parent?.Parent?.Parent?.PendingConnection != null) {
-      _connectionDragFinished.OnNext(Unit.Default);
+      _connectionDragFinished.OnNext(RxVoid.Default);
     }
   }
 }
