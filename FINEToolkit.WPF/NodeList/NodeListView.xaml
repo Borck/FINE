@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:controls="clr-namespace:FINE.Views.Controls;assembly=FINE.WPF"
-             xmlns:local="clr-namespace:FINE.Toolkit.NodeList"
+             xmlns:vwp="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="320"
              Background="#f1f1f1"
@@ -22,8 +22,11 @@
                 <!-- Overlay absorbs mouse events -->
             </Grid>
         </DataTemplate>
+        <!-- Used as the ItemsPanel only when grouping is NOT active - then the ItemsPanel hosts the
+             tiles themselves. When grouping IS active the ItemsPanel hosts GroupItems instead, so
+             the stack template below is used there and the wrap panel moves to GroupStyle.Panel. -->
         <ItemsPanelTemplate x:Key="tilesItemsPanelTemplate">
-            <local:VirtualizingWrapPanel IsItemsHost="True" />
+            <vwp:VirtualizingWrapPanel Orientation="Horizontal" />
         </ItemsPanelTemplate>
         <ControlTemplate x:Key="tilesItemsControlTemplate">
             <ScrollViewer CanContentScroll="True" Focusable="False">
@@ -58,8 +61,10 @@
                 </Viewbox>
             </Grid>
         </DataTemplate>
+        <!-- Used for List display mode, and for ANY display mode while grouping is active (where the
+             ItemsPanel stacks the group Expanders vertically). -->
         <ItemsPanelTemplate x:Key="listItemsPanelTemplate">
-            <VirtualizingStackPanel HorizontalAlignment="Stretch" IsItemsHost="True"/>
+            <VirtualizingStackPanel Orientation="Vertical" HorizontalAlignment="Stretch"/>
         </ItemsPanelTemplate>
         <ControlTemplate x:Key="listItemsControlTemplate">
             <ScrollViewer CanContentScroll="True" Focusable="False">
@@ -92,9 +97,17 @@
                           VirtualizingPanel.ScrollUnit="Pixel">
                 <ItemsControl.GroupStyle>
                     <GroupStyle>
+                        <!-- When grouping is active this - not ItemsPanel - is what lays out the
+                             actual node tiles. The virtualization attached properties must be set
+                             directly on this panel: values set on the outer ItemsControl are NOT
+                             propagated into GroupStyle.Panel. Also correct for List display mode,
+                             where full-width rows simply wrap one per line. -->
                         <GroupStyle.Panel>
                             <ItemsPanelTemplate>
-                                <VirtualizingStackPanel IsItemsHost="True" Orientation="Vertical"/>
+                                <vwp:VirtualizingWrapPanel Orientation="Horizontal"
+                                                           VirtualizingPanel.IsVirtualizing="True"
+                                                           VirtualizingPanel.VirtualizationMode="Recycling"
+                                                           VirtualizingPanel.ScrollUnit="Pixel"/>
                             </ItemsPanelTemplate>
                         </GroupStyle.Panel>
                         <GroupStyle.ContainerStyle>

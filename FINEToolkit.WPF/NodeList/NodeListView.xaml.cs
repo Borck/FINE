@@ -1,11 +1,14 @@
 namespace FINE.Toolkit.NodeList;
 
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -83,10 +86,25 @@ public partial class NodeListView : IViewFor<NodeListViewModel> {
               : Resources["listTemplate"])
           .DisposeWith(d);
 
-      this.OneWayBind(ViewModel, vm => vm.Display, v => v.elementsList.ItemsPanel,
-          displayMode => displayMode == NodeListViewModel.DisplayMode.Tiles
-              ? Resources["tilesItemsPanelTemplate"]
-              : Resources["listItemsPanelTemplate"])
+      // The ItemsPanel's job depends on whether grouping is active: with grouping it hosts the
+      // GroupItems (the category Expanders) and GroupStyle.Panel lays out the tiles, so the wrap
+      // panel only belongs here when there is no grouping. Grouping is configured by consumers on
+      // the public CVS after this view is constructed, so watch the collection rather than
+      // sampling it once.
+      var groupingChanged = Observable
+          .FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
+              h => CVS.GroupDescriptions.CollectionChanged += h,
+              h => CVS.GroupDescriptions.CollectionChanged -= h)
+          .Select(_ => Unit.Default)
+          .StartWith(Unit.Default);
+
+      this.WhenAnyValue(v => v.ViewModel.Display)
+          .CombineLatest(groupingChanged, (displayMode, _) => displayMode)
+          .Select(displayMode =>
+              displayMode == NodeListViewModel.DisplayMode.Tiles && CVS.GroupDescriptions.Count == 0
+                  ? (ItemsPanelTemplate)Resources["tilesItemsPanelTemplate"]
+                  : (ItemsPanelTemplate)Resources["listItemsPanelTemplate"])
+          .BindTo(this, v => v.elementsList.ItemsPanel)
           .DisposeWith(d);
 
       this.OneWayBind(ViewModel, vm => vm.Display, v => v.elementsList.Template,
