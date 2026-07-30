@@ -2,7 +2,7 @@ namespace ExampleCodeGenApp.ViewModels.Nodes;
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using ExampleCodeGenApp.Views.Editors;
 using FINE.Toolkit.ValueNode;
@@ -16,16 +16,16 @@ using ReactiveUI;
 /// </summary>
 public interface IGroupEndpointEditorViewModel {
   public Endpoint Endpoint { get; }
-  public ReactiveCommand<Unit, Unit> MoveUp { get; }
-  public ReactiveCommand<Unit, Unit> MoveDown { get; }
-  public ReactiveCommand<Unit, Unit> Delete { get; }
+  public ReactiveCommand<RxVoid, RxVoid> MoveUp { get; }
+  public ReactiveCommand<RxVoid, RxVoid> MoveDown { get; }
+  public ReactiveCommand<RxVoid, RxVoid> Delete { get; }
 }
 
 public class GroupEndpointEditorViewModel<T> : ValueEditorViewModel<T>, IGroupEndpointEditorViewModel {
   public Endpoint Endpoint => Parent;
-  public ReactiveCommand<Unit, Unit> MoveUp { get; }
-  public ReactiveCommand<Unit, Unit> MoveDown { get; }
-  public ReactiveCommand<Unit, Unit> Delete { get; }
+  public ReactiveCommand<RxVoid, RxVoid> MoveUp { get; }
+  public ReactiveCommand<RxVoid, RxVoid> MoveDown { get; }
+  public ReactiveCommand<RxVoid, RxVoid> Delete { get; }
 
   static GroupEndpointEditorViewModel() {
     Splat.Locator.CurrentMutable.Register(() => new GroupEndpointEditorView(), typeof(IViewFor<GroupEndpointEditorViewModel<T>>));

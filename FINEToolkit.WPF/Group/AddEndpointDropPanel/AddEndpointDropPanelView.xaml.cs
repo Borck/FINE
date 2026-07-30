@@ -1,6 +1,6 @@
 namespace FINE.Toolkit.Group.AddEndpointDropPanel;
 
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
@@ -41,7 +41,7 @@ public partial class AddEndpointDropPanelView : IViewFor<AddEndpointDropPanelVie
       Observable.FromEventPattern<MouseButtonEventHandler, MouseButtonEventArgs>(
           h => MouseLeftButtonUp += h,
           h => MouseLeftButtonUp -= h)
-          .Select(_ => Unit.Default)
+          .Select(_ => RxVoid.Default)
           .InvokeCommand(this, v => v.ViewModel.AddEndpointFromPendingConnection)
           .DisposeWith(d);
     });

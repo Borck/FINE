@@ -16,13 +16,10 @@
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <Using Include="ReactiveUI.Reactive" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="DynamicData" Version="9.4.33" />
     <PackageReference Include="log4net" Version="3.3.2" />
-    <PackageReference Include="ReactiveUI.Reactive" Version="24.0.0" />
-    <PackageReference Include="ReactiveUI.WPF.Reactive" Version="24.0.0" />
+    <PackageReference Include="ReactiveUI" Version="24.0.0" />
+    <PackageReference Include="ReactiveUI.WPF" Version="24.0.0" />
     <PackageReference Include="Splat" Version="20.2.0" />
     <PackageReference Include="Splat.Builder" Version="20.2.0" />
     <PackageReference Include="Splat.Core" Version="20.2.0" />

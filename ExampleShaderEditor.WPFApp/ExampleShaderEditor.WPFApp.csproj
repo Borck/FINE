@@ -28,14 +28,11 @@
     <Resource Include="Resources\Icons\pos.png" />
   </ItemGroup>
   <ItemGroup>
-    <Using Include="ReactiveUI.Reactive" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.1.2" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
     <PackageReference Include="OpenTK" Version="4.9.4" />
     <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
-    <PackageReference Include="ReactiveUI.Reactive" Version="24.0.0" />
+    <PackageReference Include="ReactiveUI" Version="24.0.0" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 namespace FINE.Toolkit.BreadcrumbBar;
 
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using DynamicData;
 using ReactiveUI;
@@ -49,7 +49,7 @@ public class BreadcrumbBarViewModel : ReactiveObject {
   /// Navigate to the subpath represented by the selected crumb which is passed as a parameter.
   /// Only this crumb and its ancestors are kept, the rest of the path is removed.
   /// </summary>
-  public ReactiveCommand<BreadcrumbViewModel, Unit> SelectCrumb { get; }
+  public ReactiveCommand<BreadcrumbViewModel, RxVoid> SelectCrumb { get; }
 
   public BreadcrumbBarViewModel() {
     SelectCrumb = ReactiveCommand.Create((BreadcrumbViewModel crumb) => {

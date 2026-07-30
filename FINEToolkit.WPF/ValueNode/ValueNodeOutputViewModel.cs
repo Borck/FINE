@@ -1,7 +1,7 @@
 namespace FINE.Toolkit.ValueNode;
 
 using System;
-using System.Reactive.Concurrency;
+using ReactiveUI.Primitives.Concurrency;
 using FINE.ViewModels;
 using FINE.Views;
 using ReactiveUI;
@@ -35,6 +35,6 @@ public class ValueNodeOutputViewModel<T> : NodeOutputViewModel {
   #endregion
 
   public ValueNodeOutputViewModel() {
-    this.WhenAnyObservable(vm => vm.Value).ToProperty(this, vm => vm.CurrentValue, out _currentValue, false, Scheduler.Immediate);
+    this.WhenAnyObservable(vm => vm.Value).ToProperty(this, vm => vm.CurrentValue, out _currentValue, false, Sequencer.Immediate);
   }
 }

@@ -1,7 +1,7 @@
 namespace ExampleCodeGenApp.ViewModels.Nodes;
 
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using DynamicData;
 using ExampleCodeGenApp.Model;
@@ -63,8 +63,8 @@ public class ForLoopNode : CodeGenNodeViewModel {
 
     var value = new ForLoop();
 
-    var loopBodyChanged = LoopBodyFlow.Values.Connect().Select(_ => Unit.Default).StartWith(Unit.Default);
-    var loopEndChanged = LoopEndFlow.Values.Connect().Select(_ => Unit.Default).StartWith(Unit.Default);
+    var loopBodyChanged = LoopBodyFlow.Values.Connect().Select(_ => RxVoid.Default).StartWith(RxVoid.Default);
+    var loopEndChanged = LoopEndFlow.Values.Connect().Select(_ => RxVoid.Default).StartWith(RxVoid.Default);
     FlowIn = new CodeGenOutputViewModel<IStatement>(PortType.Execution) {
       Name = "",
       Value = Observable.CombineLatest(loopBodyChanged, loopEndChanged, FirstIndex.ValueChanged, LastIndex.ValueChanged,

@@ -2,7 +2,7 @@ namespace FINETests;
 
 using System;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using DynamicData;
@@ -66,7 +66,7 @@ public class NetworkViewModelTests {
     network.Connections.Add(network.ConnectionFactory(nodeBInput, nodeAOutput));
     network.Connections.Add(network.ConnectionFactory(nodeCInput, nodeBOutput));
 
-    Observable.Return(Unit.Default).InvokeCommand(network.DeleteSelectedNodes);
+    Observable.Return(RxVoid.Default).InvokeCommand(network.DeleteSelectedNodes);
 
     Assert.AreEqual(1, network.Connections.Count);
     Assert.IsTrue(network.Nodes.Items.SequenceEqual(new[] { nodeA, nodeB }));
@@ -377,7 +377,7 @@ public class NetworkViewModelTests {
     //Assert
     var expected = new[]
     {
-              ReactiveTest.OnNext(10, Unit.Default)
+              ReactiveTest.OnNext(10, RxVoid.Default)
           };
     ReactiveAssert.AreElementsEqual(expected, actual.Messages);
   }
@@ -417,7 +417,7 @@ public class NetworkViewModelTests {
     //Assert
     var expected = new[]
     {
-              ReactiveTest.OnNext(10, Unit.Default)
+              ReactiveTest.OnNext(10, RxVoid.Default)
           };
     ReactiveAssert.AreElementsEqual(expected, actual.Messages);
   }

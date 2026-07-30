@@ -3,7 +3,7 @@ namespace ExampleCodeGenApp;
 using System.Windows;
 using FINE;
 using ReactiveUI;
-using ReactiveUI.Reactive.Builder;
+using ReactiveUI.Builder;
 
 public partial class App : Application {
   protected override void OnStartup(StartupEventArgs e) {
