@@ -104,6 +104,7 @@ public partial class NodeListView : IViewFor<NodeListViewModel> {
               displayMode == NodeListViewModel.DisplayMode.Tiles && CVS.GroupDescriptions.Count == 0
                   ? (ItemsPanelTemplate)Resources["tilesItemsPanelTemplate"]
                   : (ItemsPanelTemplate)Resources["listItemsPanelTemplate"])
+          .DistinctUntilChanged()
           .BindTo(this, v => v.elementsList.ItemsPanel)
           .DisposeWith(d);
 
