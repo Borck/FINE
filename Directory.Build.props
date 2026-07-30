@@ -13,6 +13,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <RootNamespace>FINE</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <!-- The .NET SDK refuses to even restore/build a Windows-targeted TFM on a non-Windows OS
+         unless this is set - needed for CI (ubuntu-latest) and any other non-Windows dev machine.
+         Left OS-conditional so a real Windows build still gets the SDK's normal (stricter) checks. -->
+    <EnableWindowsTargeting Condition="'$(OS)' != 'Windows_NT'">true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>
