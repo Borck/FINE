@@ -3,7 +3,7 @@ namespace FINE.Toolkit.ContextMenu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Windows;
 using DynamicData;
 using FINE.ViewModels;
@@ -49,19 +49,19 @@ public class AddNodeContextMenuViewModel : SearchableContextMenuViewModel {
   /// An interaction that is used to open contextmenu views given a SearchableContextMenuViewModel.
   /// Used in ShowAddNodeForPendingConnectionMenu to display this menu, and a menu for choosing an endpoint.
   /// </summary>
-  public Interaction<SearchableContextMenuViewModel, Unit> OpenContextMenu { get; } = new Interaction<SearchableContextMenuViewModel, Unit>();
+  public Interaction<SearchableContextMenuViewModel, RxVoid> OpenContextMenu { get; } = new Interaction<SearchableContextMenuViewModel, RxVoid>();
 
-  private ReactiveCommand<NodeTemplate, Unit> CreateNode { get; }
+  private ReactiveCommand<NodeTemplate, RxVoid> CreateNode { get; }
 
   public AddNodeContextMenuViewModel(string labelFormat = "{0}") {
     LabelFormat = labelFormat;
 
-    CreateNode = ReactiveCommand.Create<NodeTemplate, Unit>((template) => {
+    CreateNode = ReactiveCommand.Create<NodeTemplate, RxVoid>((template) => {
       var nodeInstance = template.Factory();
       Network.Nodes.Add(nodeInstance);
       nodeInstance.Position = NodePositionFunc(nodeInstance);
       OnNodeAdded(nodeInstance);
-      return Unit.Default;
+      return RxVoid.Default;
     });
   }
 
@@ -118,10 +118,10 @@ public class AddNodeContextMenuViewModel : SearchableContextMenuViewModel {
         } else {
           // Open a menu to let the user choose the desired output to connect to
           var chooseEndpointVM = new SearchableContextMenuViewModel();
-          var cmd = ReactiveCommand.Create<NodeOutputViewModel, Unit>((o) => {
+          var cmd = ReactiveCommand.Create<NodeOutputViewModel, RxVoid>((o) => {
             Network.Connections.Add(Network.ConnectionFactory(pendingCon.Input, o));
             Network.RemovePendingConnection();
-            return Unit.Default;
+            return RxVoid.Default;
           });
           foreach (var output in outputs) {
             chooseEndpointVM.Commands.Add(new LabeledCommand {
@@ -140,10 +140,10 @@ public class AddNodeContextMenuViewModel : SearchableContextMenuViewModel {
           Network.RemovePendingConnection();
         } else {
           var chooseEndpointVM = new SearchableContextMenuViewModel();
-          var cmd = ReactiveCommand.Create<NodeInputViewModel, Unit>((i) => {
+          var cmd = ReactiveCommand.Create<NodeInputViewModel, RxVoid>((i) => {
             Network.Connections.Add(Network.ConnectionFactory(i, pendingCon.Output));
             Network.RemovePendingConnection();
-            return Unit.Default;
+            return RxVoid.Default;
           });
           foreach (var input in inputs) {
             chooseEndpointVM.Commands.Add(new LabeledCommand {

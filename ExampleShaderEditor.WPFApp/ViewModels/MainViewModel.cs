@@ -2,7 +2,7 @@ namespace ExampleShaderEditorApp.ViewModels;
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using DynamicData;
 using ExampleShaderEditorApp.ViewModels.Nodes;
@@ -23,7 +23,7 @@ public class MainViewModel : ReactiveObject {
   public AddNodeContextMenuViewModel AddNodeMenuVM { get; } = new AddNodeContextMenuViewModel("Add {0}");
   public AddNodeContextMenuViewModel AddNodeForPendingConnectionMenuVM { get; } = new AddNodeContextMenuViewModel("Add {0}");
 
-  public ReactiveCommand<Unit, Unit> CollapseAllCommand { get; }
+  public ReactiveCommand<RxVoid, RxVoid> CollapseAllCommand { get; }
 
   private readonly NodeTemplate[] nodeTemplates =
   {

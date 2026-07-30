@@ -2,7 +2,7 @@ namespace FINE.Toolkit.ValueNode;
 
 using System;
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using FINE.ViewModels;
 using FINE.Views;
@@ -76,7 +76,7 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
   }
 
   private IObservable<T> GenerateConnectedValuesBinding(ValidationAction connectionChangedValidationAction, ValidationAction connectedValueChangedValidationAction) {
-    var onConnectionChanged = Connections.Connect().Select(_ => Unit.Default).StartWith(Unit.Default)
+    var onConnectionChanged = Connections.Connect().Select(_ => RxVoid.Default).StartWith(RxVoid.Default)
         .Select(_ => Connections.Count == 0 ? null : Connections.Items[0]);
 
     //On connection change

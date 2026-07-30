@@ -1,7 +1,7 @@
 namespace ExampleCodeGenApp.ViewModels;
 
 using System.Linq;
-using System.Reactive;
+using RxVoid = ReactiveUI.Primitives.RxVoid;
 using System.Reactive.Linq;
 using DynamicData;
 using ExampleCodeGenApp.Model;
@@ -34,13 +34,13 @@ public class MainViewModel : ReactiveObject {
   public CodePreviewViewModel CodePreview { get; } = new CodePreviewViewModel();
   public CodeSimViewModel CodeSim { get; } = new CodeSimViewModel();
 
-  public ReactiveCommand<Unit, Unit> AutoLayout { get; }
-  public ReactiveCommand<Unit, Unit> StartAutoLayoutLive { get; }
-  public ReactiveCommand<Unit, Unit> StopAutoLayoutLive { get; }
+  public ReactiveCommand<RxVoid, RxVoid> AutoLayout { get; }
+  public ReactiveCommand<RxVoid, RxVoid> StartAutoLayoutLive { get; }
+  public ReactiveCommand<RxVoid, RxVoid> StopAutoLayoutLive { get; }
 
-  public ReactiveCommand<Unit, Unit> GroupNodes { get; }
-  public ReactiveCommand<Unit, Unit> UngroupNodes { get; }
-  public ReactiveCommand<Unit, Unit> OpenGroup { get; }
+  public ReactiveCommand<RxVoid, RxVoid> GroupNodes { get; }
+  public ReactiveCommand<RxVoid, RxVoid> UngroupNodes { get; }
+  public ReactiveCommand<RxVoid, RxVoid> OpenGroup { get; }
 
   public MainViewModel() {
     this.WhenAnyValue(vm => vm.NetworkBreadcrumbBar.ActiveItem).Cast<NetworkBreadcrumb>()
@@ -67,7 +67,7 @@ public class MainViewModel : ReactiveObject {
     var layouter = new ForceDirectedLayouter();
     AutoLayout = ReactiveCommand.Create(() => layouter.Layout(new Configuration { Network = Network }, 10000));
     StartAutoLayoutLive = ReactiveCommand.CreateFromObservable(() =>
-      Observable.StartAsync(ct => layouter.LayoutAsync(new Configuration { Network = Network }, ct)).TakeUntil(StopAutoLayoutLive)
+      Observable.StartAsync(ct => layouter.LayoutAsync(new Configuration { Network = Network }, ct)).Select(_ => RxVoid.Default).TakeUntil(StopAutoLayoutLive)
     );
     StopAutoLayoutLive = ReactiveCommand.Create(() => { }, StartAutoLayoutLive.IsExecuting);
 

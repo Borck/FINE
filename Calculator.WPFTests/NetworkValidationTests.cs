@@ -2,13 +2,12 @@ namespace CalculatorTests;
 
 using System;
 using System.Linq;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using DynamicData;
 using ExampleCalculatorApp.ViewModels;
 using ExampleCalculatorApp.ViewModels.Nodes;
-using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ReactiveUI.Primitives.Concurrency;
 using ReactiveUI.Testing;
 
 [TestClass]
@@ -23,7 +22,7 @@ public class NetworkValidationTests {
   }
 
   [TestMethod]
-  public void TestConstantToOutput() => ImmediateScheduler.Instance.With(_ => {
+  public void TestConstantToOutput() => Sequencer.Immediate.With(_ => {
     var main = new MainViewModel();
     var outputNode = main.NetworkViewModel.Nodes.Items.OfType<OutputNodeViewModel>().First();
 
@@ -37,7 +36,7 @@ public class NetworkValidationTests {
   });
 
   [TestMethod]
-  public void TestDivideToOutput() => ImmediateScheduler.Instance.With(_ => {
+  public void TestDivideToOutput() => Sequencer.Immediate.With(_ => {
     var main = new MainViewModel();
     var outputNode = main.NetworkViewModel.Nodes.Items.OfType<OutputNodeViewModel>().First();
 
@@ -181,7 +180,7 @@ public class NetworkValidationTests {
   }
 
   [TestMethod, Timeout(5000)]
-  public void TestProductRecursively() => ImmediateScheduler.Instance.With(_ => {
+  public void TestProductRecursively() => Sequencer.Immediate.With(_ => {
     var main = new MainViewModel();
     var outputNode =
         main.NetworkViewModel.Nodes.Items.OfType<OutputNodeViewModel>().First();
@@ -204,7 +203,7 @@ public class NetworkValidationTests {
   });
 
   [TestMethod/*, Timeout(5000)*/]
-  public void TestLongChain() => new TestScheduler().With(_ => {
+  public void TestLongChain() => new VirtualClock().With(_ => {
     var main = new MainViewModel();
     var outputNode =
         main.NetworkViewModel.Nodes.Items.OfType<OutputNodeViewModel>().First();
@@ -246,7 +245,7 @@ public class NetworkValidationTests {
     //scheduled after the assertion. Ideally, this should be resolved by using TestScheduler
     //but it isn't. However, it seems this is only a problem in tests.
 #if NET8_0_OR_GREATER
-    _.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+    _.AdvanceBy(TimeSpan.FromMilliseconds(100));
 #else
       _.AdvanceByMs(100);
 #endif
