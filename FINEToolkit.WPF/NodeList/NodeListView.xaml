@@ -99,16 +99,22 @@
                 <ItemsControl.GroupStyle>
                     <GroupStyle>
                         <!-- When grouping is active this - not ItemsPanel - is what lays out the
-                             actual node tiles. The virtualization attached properties must be set
-                             directly on this panel: values set on the outer ItemsControl are NOT
-                             propagated into GroupStyle.Panel. Also correct for List display mode,
-                             where full-width rows simply wrap one per line. -->
+                             actual node tiles. Also correct for List display mode, where
+                             full-width rows simply wrap one per line.
+                             Deliberately NOT the virtualizing wrap panel here: the library only
+                             documents/tests it as the OUTER panel with a plain built-in
+                             VirtualizingStackPanel for GroupStyle.Panel - the reverse of what we
+                             need (groups stacked vertically, tiles wrapped within each group).
+                             Using it nested inside GroupStyle.Panel, under a plain outer
+                             VirtualizingStackPanel, is an unsupported combination that hangs the
+                             app on first layout. Groups here are always small (a handful of node
+                             templates per category), so virtualizing within them buys nothing
+                             anyway - a plain non-virtualizing WrapPanel sidesteps the bug with no
+                             real cost. The outer ItemsPanel still virtualizes for the large flat
+                             (non-grouped) case, which is what the original perf work targeted. -->
                         <GroupStyle.Panel>
                             <ItemsPanelTemplate>
-                                <vwp:VirtualizingWrapPanel Orientation="Horizontal"
-                                                           VirtualizingPanel.IsVirtualizing="True"
-                                                           VirtualizingPanel.VirtualizationMode="Recycling"
-                                                           VirtualizingPanel.ScrollUnit="Pixel"/>
+                                <WrapPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
                         </GroupStyle.Panel>
                         <GroupStyle.ContainerStyle>
