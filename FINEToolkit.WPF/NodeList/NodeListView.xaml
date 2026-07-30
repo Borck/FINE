@@ -91,6 +91,7 @@
 
         <Grid Row="2" Margin="10,10,10,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <ItemsControl x:Name="elementsList" IsTabStop="False"
+                          ScrollViewer.CanContentScroll="True"
                           VirtualizingPanel.IsVirtualizing="True"
                           VirtualizingPanel.VirtualizationMode="Recycling"
                           VirtualizingPanel.IsVirtualizingWhenGrouping="True"
