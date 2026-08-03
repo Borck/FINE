@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using Splat;
 
+
+
 /// <summary>
 /// A locator is used to find the correct view corresponding to a viewmodel.
 /// In ReactiveUI, usually Splat is used, but others exist. This class acts as an intermediate registrar.
@@ -12,6 +14,8 @@ using Splat;
 public sealed class NNViewRegistrar {
   private static readonly List<Tuple<Func<object>, Type>> _pendingRegistrations = [];
   private static Action<Func<object>, Type> _registerAction;
+
+
 
   public static void AddRegistration(Func<object> factory, Type serviceType) {
     if (factory == null) {
@@ -27,6 +31,8 @@ public sealed class NNViewRegistrar {
     }
   }
 
+
+
   public static void RegisterToLocator(Action<Func<object>, Type> newRegisterAction) {
     if (newRegisterAction == null) {
       throw new ArgumentNullException(nameof(newRegisterAction));
@@ -38,12 +44,28 @@ public sealed class NNViewRegistrar {
     foreach (var t in _pendingRegistrations) {
       _registerAction(t.Item1, t.Item2);
     }
+
     _pendingRegistrations.Clear();
   }
+
+
 
   /// <summary>
   /// Register all FINE.WPF view/viewmodel pairs to Locator.CurrentMutable.
   /// </summary>
-  public static void RegisterSplat() =>
+  public static void RegisterSplat() {
     RegisterToLocator((f, t) => Locator.CurrentMutable.Register(f, t));
+    RegisterBitmapLoader();
+  }
+
+
+
+  /// <summary>
+  /// Ensure an <see cref="IBitmapLoader"/> is available.
+  /// </summary>
+  private static void RegisterBitmapLoader() {
+    if (Locator.Current.GetService<IBitmapLoader>() is null) {
+      Locator.CurrentMutable.RegisterPlatformBitmapLoader();
+    }
+  }
 }
