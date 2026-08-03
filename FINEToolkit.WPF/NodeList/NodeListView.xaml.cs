@@ -86,11 +86,12 @@ public partial class NodeListView : IViewFor<NodeListViewModel> {
               : Resources["listTemplate"])
           .DisposeWith(d);
 
-      // The ItemsPanel's job depends on whether grouping is active: with grouping it hosts the
-      // GroupItems (the category Expanders) and GroupStyle.Panel lays out the tiles, so the wrap
-      // panel only belongs here when there is no grouping. Grouping is configured by consumers on
-      // the public CVS after this view is constructed, so watch the collection rather than
-      // sampling it once.
+      // Both the ItemsPanel and the surrounding ScrollViewer template depend on whether grouping
+      // is active, not just on the display mode. With grouping the ItemsPanel is used at two
+      // levels at once (see the GroupStyle comment in the XAML) and must be a plain,
+      // non-virtualizing panel; without grouping it hosts the items directly and can virtualize.
+      // Grouping is configured by consumers on the public CVS after this view is constructed, so
+      // watch the collection rather than sampling it once.
       var groupingChanged = Observable
           .FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
               h => CVS.GroupDescriptions.CollectionChanged += h,
@@ -98,20 +99,22 @@ public partial class NodeListView : IViewFor<NodeListViewModel> {
           .Select(_ => Unit.Default)
           .StartWith(Unit.Default);
 
-      this.WhenAnyValue(v => v.ViewModel.Display)
-          .CombineLatest(groupingChanged, (displayMode, _) => displayMode)
-          .Select(displayMode =>
-              displayMode == NodeListViewModel.DisplayMode.Tiles && CVS.GroupDescriptions.Count == 0
-                  ? (ItemsPanelTemplate)Resources["tilesItemsPanelTemplate"]
-                  : (ItemsPanelTemplate)Resources["listItemsPanelTemplate"])
-          .DistinctUntilChanged()
+      var displayAndGrouping = this.WhenAnyValue(v => v.ViewModel.Display)
+          .CombineLatest(groupingChanged, (displayMode, _) => (displayMode, grouped: CVS.GroupDescriptions.Count > 0))
+          .DistinctUntilChanged();
+
+      displayAndGrouping
+          .Select(t => t.displayMode == NodeListViewModel.DisplayMode.Tiles
+              ? (ItemsPanelTemplate)Resources[t.grouped ? "tilesGroupedItemsPanelTemplate" : "tilesItemsPanelTemplate"]
+              : (ItemsPanelTemplate)Resources[t.grouped ? "listGroupedItemsPanelTemplate" : "listItemsPanelTemplate"])
           .BindTo(this, v => v.elementsList.ItemsPanel)
           .DisposeWith(d);
 
-      this.OneWayBind(ViewModel, vm => vm.Display, v => v.elementsList.Template,
-          displayMode => displayMode == NodeListViewModel.DisplayMode.Tiles
-              ? Resources["tilesItemsControlTemplate"]
-              : Resources["listItemsControlTemplate"])
+      displayAndGrouping
+          .Select(t => (ControlTemplate)Resources[t.grouped
+              ? "groupedItemsControlTemplate"
+              : "virtualizingItemsControlTemplate"])
+          .BindTo(this, v => v.elementsList.Template)
           .DisposeWith(d);
 
       this.Bind(ViewModel, vm => vm.SearchQuery, v => v.searchBox.Text).DisposeWith(d);

@@ -22,17 +22,21 @@
                 <!-- Overlay absorbs mouse events -->
             </Grid>
         </DataTemplate>
-        <!-- Used as the ItemsPanel only when grouping is NOT active - then the ItemsPanel hosts the
-             tiles themselves. When grouping IS active the ItemsPanel hosts GroupItems instead, so
-             the stack template below is used there and the wrap panel moves to GroupStyle.Panel. -->
+        <!-- Tiles, grouping NOT active: the ItemsPanel hosts the tiles directly, so this is where
+             virtualization actually pays off (the flat list is the large one). -->
         <ItemsPanelTemplate x:Key="tilesItemsPanelTemplate">
             <vwp:VirtualizingWrapPanel Orientation="Horizontal" />
         </ItemsPanelTemplate>
-        <ControlTemplate x:Key="tilesItemsControlTemplate">
-            <ScrollViewer CanContentScroll="True" Focusable="False">
-                <ItemsPresenter HorizontalAlignment="Stretch"/>
-            </ScrollViewer>
-        </ControlTemplate>
+        <!-- Tiles, grouping active. NOTE: with grouping this single template is used at BOTH
+             levels - GroupStyle below deliberately does not set a Panel, so each group's
+             ItemsPresenter falls back to the ItemsControl's ItemsPanel (this one). The outer level
+             lays out the full-width group Expanders, which therefore stack one per line, while
+             within each group the tiles wrap - which is exactly the per-category wrapping we want.
+             Must be the plain WrapPanel, not the virtualizing one: the virtualizing panel cannot
+             serve both levels, and nesting it under grouping hangs on first layout. -->
+        <ItemsPanelTemplate x:Key="tilesGroupedItemsPanelTemplate">
+            <WrapPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
 
         <DataTemplate x:Key="listTemplate">
             <Grid HorizontalAlignment="Stretch" Margin="0, 0, 0, 0" MouseMove="OnNodeMouseMove">
@@ -61,13 +65,33 @@
                 </Viewbox>
             </Grid>
         </DataTemplate>
-        <!-- Used for List display mode, and for ANY display mode while grouping is active (where the
-             ItemsPanel stacks the group Expanders vertically). -->
+        <!-- List display mode, grouping NOT active. -->
         <ItemsPanelTemplate x:Key="listItemsPanelTemplate">
             <VirtualizingStackPanel Orientation="Vertical" HorizontalAlignment="Stretch"/>
         </ItemsPanelTemplate>
-        <ControlTemplate x:Key="listItemsControlTemplate">
-            <ScrollViewer CanContentScroll="True" Focusable="False">
+        <!-- List display mode, grouping active - again used at both levels (see the tiles
+             equivalent above). Full-width rows stack one per line either way. -->
+        <ItemsPanelTemplate x:Key="listGroupedItemsPanelTemplate">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"/>
+        </ItemsPanelTemplate>
+
+        <!-- Scroll host used whenever the ItemsPanel virtualizes (grouping NOT active).
+             HorizontalScrollBarVisibility must be Disabled: with Auto the viewer offers infinite
+             width along the scrollable axis, so a wrap panel never has a reason to wrap and just
+             grows sideways instead. -->
+        <ControlTemplate x:Key="virtualizingItemsControlTemplate">
+            <ScrollViewer CanContentScroll="True" Focusable="False"
+                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ItemsPresenter HorizontalAlignment="Stretch"/>
+            </ScrollViewer>
+        </ControlTemplate>
+        <!-- Scroll host used while grouping is active. CanContentScroll=False gives plain
+             continuous pixel scrolling over a fully realized tree - the pre-virtualization
+             behavior. Item-based scrolling over groups is what made scrolling jump between
+             categories, since each "item" at the outer level is a whole category Expander. -->
+        <ControlTemplate x:Key="groupedItemsControlTemplate">
+            <ScrollViewer CanContentScroll="False" Focusable="False"
+                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <ItemsPresenter HorizontalAlignment="Stretch"/>
             </ScrollViewer>
         </ControlTemplate>
@@ -91,32 +115,21 @@
 
         <Grid Row="2" Margin="10,10,10,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <ItemsControl x:Name="elementsList" IsTabStop="False"
-                          ScrollViewer.CanContentScroll="True"
                           VirtualizingPanel.IsVirtualizing="True"
                           VirtualizingPanel.VirtualizationMode="Recycling"
-                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                           VirtualizingPanel.ScrollUnit="Pixel">
                 <ItemsControl.GroupStyle>
                     <GroupStyle>
-                        <!-- When grouping is active this - not ItemsPanel - is what lays out the
-                             actual node tiles. Also correct for List display mode, where
-                             full-width rows simply wrap one per line.
-                             Deliberately NOT the virtualizing wrap panel here: the library only
-                             documents/tests it as the OUTER panel with a plain built-in
-                             VirtualizingStackPanel for GroupStyle.Panel - the reverse of what we
-                             need (groups stacked vertically, tiles wrapped within each group).
-                             Using it nested inside GroupStyle.Panel, under a plain outer
-                             VirtualizingStackPanel, is an unsupported combination that hangs the
-                             app on first layout. Groups here are always small (a handful of node
-                             templates per category), so virtualizing within them buys nothing
-                             anyway - a plain non-virtualizing WrapPanel sidesteps the bug with no
-                             real cost. The outer ItemsPanel still virtualizes for the large flat
-                             (non-grouped) case, which is what the original perf work targeted. -->
-                        <GroupStyle.Panel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </GroupStyle.Panel>
+                        <!-- Deliberately NO GroupStyle.Panel. With it unset, each group's
+                             ItemsPresenter falls back to the ItemsControl's ItemsPanel, so the
+                             *Grouped* ItemsPanel templates above serve both levels at once - which
+                             is what actually produces per-category wrapping. Setting an explicit
+                             Panel here instead breaks that, because the outer ItemsPanel then has
+                             to be a separate vertical stack and the two levels stop agreeing on
+                             width. Grouping also intentionally does not virtualize (see
+                             groupedItemsControlTemplate); categories are few and small, so there
+                             is nothing to gain, and virtualizing across groups is what made
+                             scrolling jump. -->
                         <GroupStyle.ContainerStyle>
                             <Style TargetType="{x:Type GroupItem}">
                                 <Setter Property="Template">
