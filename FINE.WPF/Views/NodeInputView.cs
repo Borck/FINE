@@ -93,6 +93,13 @@ public class NodeInputView : Control, IViewFor<NodeInputViewModel> {
     NameLabel = GetTemplateChild(nameof(NameLabel)) as TextBlock;
     Icon = GetTemplateChild(nameof(Icon)) as Image;
 
+    // Under heavy load, activation (WhenActivated) can run before the template
+    // is applied, so the initial OneWayBind push of Name is lost because
+    // NameLabel is still null at that point. Re-sync it here defensively.
+    if (NameLabel != null) {
+      NameLabel.Text = ViewModel?.Name;
+    }
+
     Grid.SetRow(EditorHost, _isHeaderEmpty ? 0 : 1);
   }
 }
