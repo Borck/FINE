@@ -78,10 +78,17 @@
         <!-- Scroll host used whenever the ItemsPanel virtualizes (grouping NOT active).
              HorizontalScrollBarVisibility must be Disabled: with Auto the viewer offers infinite
              width along the scrollable axis, so a wrap panel never has a reason to wrap and just
-             grows sideways instead. -->
+             grows sideways instead.
+             VerticalScrollBarVisibility must be Visible, not Auto: Auto makes the ScrollViewer
+             alternate between measuring with and without the scrollbar's width reserved. Toggling
+             the available width changes how many tiles fit per row in VirtualizingWrapPanel, which
+             changes the desired height, which flips the scrollbar decision back - an infinite
+             MeasureOverride loop that hangs the very first layout pass (see
+             https://github.com/sbaeumlisberger/VirtualizingWrapPanel/issues/2). Reserving the
+             scrollbar's space unconditionally breaks that feedback loop. -->
         <ControlTemplate x:Key="virtualizingItemsControlTemplate">
             <ScrollViewer CanContentScroll="True" Focusable="False"
-                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
                 <ItemsPresenter HorizontalAlignment="Stretch"/>
             </ScrollViewer>
         </ControlTemplate>
