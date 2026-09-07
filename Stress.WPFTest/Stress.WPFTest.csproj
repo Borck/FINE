@@ -11,6 +11,6 @@
     <ProjectReference Include="..\FINE.WPF\FINE.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ReactiveUI" Version="24.0.0" />
+    <PackageReference Include="ReactiveUI" />
   </ItemGroup>
 </Project>

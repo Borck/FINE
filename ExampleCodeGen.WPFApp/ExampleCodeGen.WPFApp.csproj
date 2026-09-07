@@ -18,8 +18,8 @@
     <ProjectReference Include="..\FINE.WPF\FINE.WPF.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="5.1.2" />
-    <PackageReference Include="MoonSharp" Version="2.0.0.0" />
-    <PackageReference Include="ReactiveUI" Version="24.0.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" />
+    <PackageReference Include="MoonSharp" />
+    <PackageReference Include="ReactiveUI" />
   </ItemGroup>
 </Project>

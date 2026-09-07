@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworks-WPF)</TargetFrameworks>
     <OutputType>library</OutputType>
@@ -16,14 +16,14 @@
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DynamicData" Version="9.4.33" />
-    <PackageReference Include="log4net" Version="3.3.2" />
-    <PackageReference Include="ReactiveUI" Version="24.0.0" />
-    <PackageReference Include="ReactiveUI.WPF" Version="24.0.0" />
-    <PackageReference Include="Splat" Version="20.2.0" />
-    <PackageReference Include="Splat.Builder" Version="20.2.0" />
-    <PackageReference Include="Splat.Core" Version="20.2.0" />
-    <PackageReference Include="Splat.Logging" Version="20.2.0" />
-    <PackageReference Include="Splat.Drawing" Version="20.2.0" />
+    <PackageReference Include="DynamicData" />
+    <PackageReference Include="log4net" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="ReactiveUI.WPF" />
+    <PackageReference Include="Splat" />
+    <PackageReference Include="Splat.Builder" />
+    <PackageReference Include="Splat.Core" />
+    <PackageReference Include="Splat.Logging" />
+    <PackageReference Include="Splat.Drawing" />
   </ItemGroup>
 </Project>

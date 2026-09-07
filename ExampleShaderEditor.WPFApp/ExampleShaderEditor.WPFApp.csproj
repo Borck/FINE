@@ -28,11 +28,11 @@
     <Resource Include="Resources\Icons\pos.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="5.1.2" />
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="MathNet.Spatial" Version="0.6.0" />
-    <PackageReference Include="OpenTK" Version="4.9.4" />
-    <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
-    <PackageReference Include="ReactiveUI" Version="24.0.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" />
+    <PackageReference Include="MathNet.Numerics" />
+    <PackageReference Include="MathNet.Spatial" />
+    <PackageReference Include="OpenTK" />
+    <PackageReference Include="OpenTK.GLControl" />
+    <PackageReference Include="ReactiveUI" />
   </ItemGroup>
 </Project>
