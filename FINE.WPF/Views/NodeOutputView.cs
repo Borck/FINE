@@ -46,6 +46,7 @@ public class NodeOutputView : Control, IViewFor<NodeOutputViewModel> {
   private Image Icon { get; set; }
 
   private bool _isHeaderEmpty;
+  private string _name;
 
 
 
@@ -58,7 +59,19 @@ public class NodeOutputView : Control, IViewFor<NodeOutputViewModel> {
 
 
   private void SetupBindings() => this.WhenActivated(d => {
-      this.OneWayBind(ViewModel, vm => vm.Name, v => v.NameLabel.Text).DisposeWith(d);
+      // Not a OneWayBind: NameLabel is only assigned in OnApplyTemplate, and under
+      // heavy load activation can run before that happens. Caching the latest
+      // value in a field (applied unconditionally here) and re-applying it from
+      // OnApplyTemplate covers both orderings deterministically.
+      this.WhenAnyValue(v => v.ViewModel.Name)
+          .Subscribe(name => {
+              _name = name;
+              if (NameLabel != null) {
+                NameLabel.Text = name;
+              }
+            }
+          )
+          .DisposeWith(d);
       this.OneWayBind(ViewModel, vm => vm.Port, v => v.EndpointHost.ViewModel).DisposeWith(d);
       this.OneWayBind(ViewModel, vm => vm.Port.IsVisible, v => v.EndpointHost.Visibility).DisposeWith(d);
       this.OneWayBind(ViewModel, vm => vm.Editor, v => v.EditorHost.ViewModel).DisposeWith(d);
@@ -92,11 +105,8 @@ public class NodeOutputView : Control, IViewFor<NodeOutputViewModel> {
     NameLabel = GetTemplateChild(nameof(NameLabel)) as TextBlock;
     Icon = GetTemplateChild(nameof(Icon)) as Image;
 
-    // Under heavy load, activation (WhenActivated) can run before the template
-    // is applied, so the initial OneWayBind push of Name is lost because
-    // NameLabel is still null at that point. Re-sync it here defensively.
     if (NameLabel != null) {
-      NameLabel.Text = ViewModel?.Name;
+      NameLabel.Text = _name;
     }
 
     Grid.SetRow(EditorHost, _isHeaderEmpty ? 0 : 1);
