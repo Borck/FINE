@@ -3,150 +3,101 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:controls="clr-namespace:FINE.Views.Controls;assembly=FINE.WPF"
              xmlns:vwp="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="320"
              Background="#f1f1f1"
              x:Name="self">
-    <UserControl.Resources>
-        <DataTemplate x:Key="tilesTemplate">
-            <Grid>
-                <controls:ViewModelViewHostNoAnimations VerticalAlignment="Top" Margin="0, 5, 0, 5" ViewModel="{Binding}" KeyboardNavigation.TabNavigation="None">
-                    <controls:ViewModelViewHostNoAnimations.LayoutTransform>
-                        <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
-                    </controls:ViewModelViewHostNoAnimations.LayoutTransform>
-                </controls:ViewModelViewHostNoAnimations>
-                <Grid Background="#01000000" MouseMove="OnNodeMouseMove" Cursor="Hand"/>
-                <!-- Overlay absorbs mouse events -->
-            </Grid>
-        </DataTemplate>
-        <!-- Tiles, grouping NOT active: the ItemsPanel hosts the tiles directly, so this is where
-             virtualization actually pays off (the flat list is the large one). -->
-        <ItemsPanelTemplate x:Key="tilesItemsPanelTemplate">
-            <vwp:VirtualizingWrapPanel Orientation="Horizontal" />
-        </ItemsPanelTemplate>
-        <!-- Tiles, grouping active. NOTE: with grouping this single template is used at BOTH
-             levels - GroupStyle below deliberately does not set a Panel, so each group's
-             ItemsPresenter falls back to the ItemsControl's ItemsPanel (this one). The outer level
-             lays out the full-width group Expanders, which therefore stack one per line, while
-             within each group the tiles wrap - which is exactly the per-category wrapping we want.
-             Must be the plain WrapPanel, not the virtualizing one: the virtualizing panel cannot
-             serve both levels, and nesting it under grouping hangs on first layout. -->
-        <ItemsPanelTemplate x:Key="tilesGroupedItemsPanelTemplate">
-            <WrapPanel Orientation="Horizontal"/>
-        </ItemsPanelTemplate>
+  <UserControl.Resources>
+    <!-- Tiles Template -->
+    <DataTemplate x:Key="tilesTemplate">
+      <Grid>
+        <controls:ViewModelViewHostNoAnimations VerticalAlignment="Top" Margin="0, 5, 0, 5" ViewModel="{Binding}" KeyboardNavigation.TabNavigation="None">
+          <controls:ViewModelViewHostNoAnimations.LayoutTransform>
+            <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+          </controls:ViewModelViewHostNoAnimations.LayoutTransform>
+        </controls:ViewModelViewHostNoAnimations>
+        <Grid Background="#01000000" MouseMove="OnNodeMouseMove" Cursor="Hand"/>
+      </Grid>
+    </DataTemplate>
 
-        <DataTemplate x:Key="listTemplate">
-            <Grid HorizontalAlignment="Stretch" Margin="0, 0, 0, 0" MouseMove="OnNodeMouseMove">
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Setter Property="Background" Value="{Binding ListEntryBackgroundBrush, ElementName=self}"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{Binding ListEntryBackgroundMouseOverBrush, ElementName=self}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Style>
-                <TextBlock Margin="10,5,5,5"><Run Text="{Binding Name}"/></TextBlock>
-                <Viewbox Stretch="Uniform" Width="10" Height="20" HorizontalAlignment="Right" Margin="5" Cursor="SizeAll">
-                    <Canvas Width="12.5" Height="30" Background="#01ffffff">
-                        <Rectangle Canvas.Left="0" Canvas.Top="0" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="0" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="0" Canvas.Top="7.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="7.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="0" Canvas.Top="15" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="15" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="0" Canvas.Top="22.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                        <Rectangle Canvas.Left="7.5" Canvas.Top="22.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
-                    </Canvas>
-                </Viewbox>
-            </Grid>
-        </DataTemplate>
-        <!-- List display mode, grouping NOT active. -->
-        <ItemsPanelTemplate x:Key="listItemsPanelTemplate">
-            <VirtualizingStackPanel Orientation="Vertical" HorizontalAlignment="Stretch"/>
-        </ItemsPanelTemplate>
-        <!-- List display mode, grouping active - again used at both levels (see the tiles
-             equivalent above). Full-width rows stack one per line either way. -->
-        <ItemsPanelTemplate x:Key="listGroupedItemsPanelTemplate">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch"/>
-        </ItemsPanelTemplate>
+    <!-- List Template -->
+    <DataTemplate x:Key="listTemplate">
+      <Grid HorizontalAlignment="Stretch" Margin="0" MouseMove="OnNodeMouseMove">
+        <Grid.Style>
+          <Style TargetType="Grid">
+            <Setter Property="Background" Value="{Binding ListEntryBackgroundBrush, ElementName=self}"/>
+            <Style.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{Binding ListEntryBackgroundMouseOverBrush, ElementName=self}"/>
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </Grid.Style>
+        <TextBlock Margin="10,5,5,5"><Run Text="{Binding Name}"/></TextBlock>
+        <Viewbox Stretch="Uniform" Width="10" Height="20" HorizontalAlignment="Right" Margin="5" Cursor="SizeAll">
+          <Canvas Width="12.5" Height="30" Background="#01ffffff">
+            <Rectangle Canvas.Left="0" Canvas.Top="0" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="7.5" Canvas.Top="0" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="0" Canvas.Top="7.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="7.5" Canvas.Top="7.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="0" Canvas.Top="15" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="7.5" Canvas.Top="15" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="0" Canvas.Top="22.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+            <Rectangle Canvas.Left="7.5" Canvas.Top="22.5" Width="4" Height="4" Fill="{Binding ListEntryHandleBrush, ElementName=self}" StrokeThickness="0" />
+          </Canvas>
+        </Viewbox>
+      </Grid>
+    </DataTemplate>
 
-        <!-- Scroll host used whenever the ItemsPanel virtualizes (grouping NOT active).
-             HorizontalScrollBarVisibility must be Disabled: with Auto the viewer offers infinite
-             width along the scrollable axis, so a wrap panel never has a reason to wrap and just
-             grows sideways instead. -->
-        <ControlTemplate x:Key="virtualizingItemsControlTemplate">
-            <ScrollViewer CanContentScroll="True" Focusable="False"
-                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <ItemsPresenter HorizontalAlignment="Stretch"/>
-            </ScrollViewer>
-        </ControlTemplate>
-        <!-- Scroll host used while grouping is active. CanContentScroll=False gives plain
-             continuous pixel scrolling over a fully realized tree - the pre-virtualization
-             behavior. Item-based scrolling over groups is what made scrolling jump between
-             categories, since each "item" at the outer level is a whole category Expander. -->
-        <ControlTemplate x:Key="groupedItemsControlTemplate">
-            <ScrollViewer CanContentScroll="False" Focusable="False"
-                          HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <ItemsPresenter HorizontalAlignment="Stretch"/>
-            </ScrollViewer>
-        </ControlTemplate>
-    </UserControl.Resources>
+    <!-- Virtualizing Panels -->
+    <ItemsPanelTemplate x:Key="tilesItemsPanelTemplate">
+      <vwp:VirtualizingWrapPanel Orientation="Horizontal" />
+    </ItemsPanelTemplate>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid Row="0">
-            <TextBlock x:Name="titleLabel" Margin="10, 0, 0, 0" Padding="0, 10, 0, 10" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontFamily="Segoe UI Semilight" Text="Test"/>
-            <ComboBox x:Name="viewComboBox" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right" Width="65" Height="20" />
-        </Grid>
+    <ItemsPanelTemplate x:Key="listItemsPanelTemplate">
+      <VirtualizingStackPanel Orientation="Vertical" HorizontalAlignment="Stretch" />
+    </ItemsPanelTemplate>
+  </UserControl.Resources>
 
-        <Grid Row="1" x:Name="searchBoxGrid" Margin="25,7,25,0" MaxWidth="300" VerticalAlignment="Top">
-            <TextBox x:Name="searchBox" TextWrapping="Wrap"/>
-            <TextBlock Margin="5, 0, 0, 0" x:Name="emptySearchBoxMessage" Text="Search..." IsHitTestVisible="False" Foreground="LightGray"/>
-        </Grid>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
 
-        <Grid Row="2" Margin="10,10,10,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <ItemsControl x:Name="elementsList" IsTabStop="False"
+    <Grid Row="0">
+      <TextBlock x:Name="titleLabel" Margin="10, 0, 0, 0" Padding="0, 10, 0, 10" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="18" FontFamily="Segoe UI Semilight" Text="Test"/>
+      <ComboBox x:Name="viewComboBox" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right" Width="65" Height="20" />
+    </Grid>
+
+    <Grid Row="1" x:Name="searchBoxGrid" Margin="25,7,25,0" MaxWidth="300" VerticalAlignment="Top">
+      <TextBox x:Name="searchBox" TextWrapping="Wrap"/>
+      <TextBlock Margin="5, 0, 0, 0" x:Name="emptySearchBoxMessage" Text="Search..." IsHitTestVisible="False" Foreground="LightGray"/>
+    </Grid>
+
+    <Grid Row="2" Margin="10,10,10,0">
+      <!-- ItemsControl with integrated virtualization template -->
+      <ItemsControl x:Name="elementsList"
+                          IsTabStop="False"
                           VirtualizingPanel.IsVirtualizing="True"
                           VirtualizingPanel.VirtualizationMode="Recycling"
-                          VirtualizingPanel.ScrollUnit="Pixel">
-                <ItemsControl.GroupStyle>
-                    <GroupStyle>
-                        <!-- Deliberately NO GroupStyle.Panel. With it unset, each group's
-                             ItemsPresenter falls back to the ItemsControl's ItemsPanel, so the
-                             *Grouped* ItemsPanel templates above serve both levels at once - which
-                             is what actually produces per-category wrapping. Setting an explicit
-                             Panel here instead breaks that, because the outer ItemsPanel then has
-                             to be a separate vertical stack and the two levels stop agreeing on
-                             width. Grouping also intentionally does not virtualize (see
-                             groupedItemsControlTemplate); categories are few and small, so there
-                             is nothing to gain, and virtualizing across groups is what made
-                             scrolling jump. -->
-                        <GroupStyle.ContainerStyle>
-                            <Style TargetType="{x:Type GroupItem}">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate>
-                                            <Expander Header="{Binding Name}" IsExpanded="True">
-                                                <ItemsPresenter />
-                                            </Expander>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </GroupStyle.ContainerStyle>
-                    </GroupStyle>
-                </ItemsControl.GroupStyle>
-            </ItemsControl>
-            <TextBlock x:Name="emptyMessage" Text="No matching nodes found" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-        </Grid>
+                          VirtualizingPanel.ScrollUnit="Pixel"
+                          ScrollViewer.CanContentScroll="True">
+        <ItemsControl.Template>
+          <ControlTemplate TargetType="ItemsControl">
+            <ScrollViewer CanContentScroll="True"
+                                      Focusable="False"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+              <ItemsPresenter HorizontalAlignment="Stretch"/>
+            </ScrollViewer>
+          </ControlTemplate>
+        </ItemsControl.Template>
+      </ItemsControl>
+      <TextBlock x:Name="emptyMessage" Text="No matching nodes found" HorizontalAlignment="Center" VerticalAlignment="Top"/>
     </Grid>
+  </Grid>
 </UserControl>
