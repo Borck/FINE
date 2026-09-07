@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net10.0</TargetFrameworks>
     <TargetFrameworks-WPF>net10.0-windows10.0.19041.0</TargetFrameworks-WPF>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
     <Authors>Christian Borck</Authors>
     <PackageTags>reactiveui node network editor node-editor graph</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
