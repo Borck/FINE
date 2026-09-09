@@ -83,13 +83,11 @@
       <ItemsControl x:Name="elementsList"
                           IsTabStop="False"
                           VirtualizingPanel.IsVirtualizing="True"
-                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                           VirtualizingPanel.VirtualizationMode="Recycling"
-                          VirtualizingPanel.ScrollUnit="Pixel"
-                          ScrollViewer.CanContentScroll="True">
+                          VirtualizingPanel.ScrollUnit="Pixel">
         <ItemsControl.Template>
           <ControlTemplate TargetType="ItemsControl">
-            <ScrollViewer CanContentScroll="True"
+            <ScrollViewer
                                       Focusable="False"
                                       HorizontalScrollBarVisibility="Disabled"
                                       VerticalScrollBarVisibility="Auto">
