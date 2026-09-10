@@ -48,7 +48,16 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
       ValidationAction connectedValueChangedValidationAction = ValidationAction.IgnoreValidation
   ) {
     MaxConnections = 1;
-    ConnectionValidator = pending => new ConnectionValidationResult(pending.Output is ValueNodeOutputViewModel<T>, null);
+    // Assignability, not identity: an output closed over a narrower or boxable type (a `double` output
+    // feeding an `object` input, an `IImageFrame` output feeding an `IFrame` input) is a perfectly valid
+    // connection. A closed-generic `is ValueNodeOutputViewModel<T>` check would reject exactly that, since
+    // ValueNodeOutputViewModel<double> and ValueNodeOutputViewModel<object> are unrelated closed types even
+    // though double boxes to object - .NET generics are invariant by default and boxing conversions are not
+    // reference conversions, so no amount of `out T` variance on this class would help either.
+    ConnectionValidator = pending =>
+        new ConnectionValidationResult(
+            pending.Output is IValueNodeOutput output && typeof(T).IsAssignableFrom(output.ValueType),
+            null);
 
     var connectedValues = GenerateConnectedValuesBinding(connectionChangedValidationAction, connectedValueChangedValidationAction);
 
@@ -75,6 +84,24 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
         .Concat(valueChanged);
   }
 
+  /// <summary>
+  /// Reads the connected output's value sequence as <typeparamref name="T"/>. Takes the zero-boxing fast
+  /// path when the output was closed over the identical type (the overwhelmingly common case); falls back
+  /// to <see cref="IValueNodeOutput.ValueBoxed"/> - boxed at the source, unboxed/cast here - for an output
+  /// closed over a merely-assignable type. <see cref="ConnectionValidator"/> is what guarantees the fallback
+  /// cast never fails: the connection would not exist otherwise.
+  /// </summary>
+  private static IObservable<T> ReadValue(NodeOutputViewModel output) =>
+      output is ValueNodeOutputViewModel<T> exact
+          ? exact.Value
+          : ((IValueNodeOutput)output).ValueBoxed.Select(v => (T)v);
+
+  /// <summary>Same fallback as <see cref="ReadValue"/>, for <see cref="ValueNodeOutputViewModel{T}.CurrentValue"/>.</summary>
+  private static T ReadCurrentValue(NodeOutputViewModel output) =>
+      output is ValueNodeOutputViewModel<T> exact
+          ? exact.CurrentValue
+          : (T)((IValueNodeOutput)output).CurrentValueBoxed;
+
   private IObservable<T> GenerateConnectedValuesBinding(ValidationAction connectionChangedValidationAction, ValidationAction connectedValueChangedValidationAction) {
     var onConnectionChanged = Connections.Connect().Select(_ => RxVoid.Default).StartWith(RxVoid.Default)
         .Select(_ => Connections.Count == 0 ? null : Connections.Items[0]);
@@ -100,8 +127,7 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
           if (Connections.Count == 0) {
             return Observable.Return(default(T));
           } else if (validation.NetworkIsTraversable) {
-            var connectedObservable =
-                ((ValueNodeOutputViewModel<T>)Connections.Items[0].Output).Value;
+            var connectedObservable = ReadValue(Connections.Items[0].Output);
             if (connectedObservable == null) {
               throw new Exception($"The value observable for output '{Connections.Items[0].Output.Name}' is null.");
             }
@@ -117,8 +143,7 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
               if (Connections.Count == 0) {
                 return Observable.Return(default(T));
               } else {
-                var connectedObservable =
-                              ((ValueNodeOutputViewModel<T>)Connections.Items[0].Output).Value;
+                var connectedObservable = ReadValue(Connections.Items[0].Output);
                 if (connectedObservable == null) {
                   throw new Exception($"The value observable for output '{Connections.Items[0].Output.Name}' is null.");
                 }
@@ -132,8 +157,7 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
         if (con == null) {
           return Observable.Return(default(T));
         } else {
-          var connectedObservable =
-              ((ValueNodeOutputViewModel<T>)con.Output).Value;
+          var connectedObservable = ReadValue(con.Output);
           if (connectedObservable == null) {
             throw new Exception($"The value observable for output '{Connections.Items[0].Output.Name}' is null.");
           }
@@ -165,7 +189,7 @@ public class ValueNodeInputViewModel<T> : NodeInputViewModel {
         }
 
         //Or just ignore the validation and push the value as is
-        return ((ValueNodeOutputViewModel<T>)Connections.Items[0].Output).CurrentValue;
+        return ReadCurrentValue(Connections.Items[0].Output);
       });
     }
 
